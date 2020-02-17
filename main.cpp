@@ -62,10 +62,10 @@ int main(int argc, char *argv[]) {
     //vdiClose(newvdi);
 
     char buffer[64];
-    struct VDIFile *f = vdiOpen(const_cast<char *>(fileName));
-    vdiSeek(f,446,SEEK_SET);
-    vdiRead(f,buffer,64);
-    displayBufferPage(reinterpret_cast<uint8_t *>(buffer), 64, 190, 256);
+    //struct VDIFile *f = vdiOpen(const_cast<char *>(fileName));
+    //vdiSeek(f,446,SEEK_SET);
+    //vdiRead(f,buffer,64);
+    //displayBufferPage(reinterpret_cast<uint8_t *>(buffer), 64, 190, 256);
 
     free(buf);
 

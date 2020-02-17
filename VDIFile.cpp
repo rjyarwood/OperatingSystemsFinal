@@ -27,17 +27,16 @@
         pread(vdi->fileDescriptor, buf,444,0);
         lseek(vdi->fileDescriptor,0,0);
         vdi->header = buf;
-        free(buf);
+
         //std::cout << "back in vdiOpen" << std::endl;
         int i = -1;
         bool cont = true;
         while(cont) {
             i++;
             //std::cout << i << std::endl;
-            if (isprint(vdi->header[i])) {
+            if (isprint(buf[i])) {
                 //std::cout<<"in if" << std::endl;
-                char chtmp = vdi->header[i];
-                vdi->imageName += chtmp;
+                vdi->imageName +=  buf[i];
             }
             else
                 cont = false;
@@ -99,17 +98,27 @@
         }
 
         for(int i = 0; i<6; i++){
-                    uuid->node[i] = vdi->header[0x192 + i] << (8*i);
-                    snapuuid->node[i] = vdi->header[0x1a2 + i] << (8*i);
-                    uuidlink->node[i] = vdi->header[0x1b2 + i] << (8*i);
-                    parentuuid->node[i] = vdi->header[0x1c2 + i] << (8*i);
+                    uuid->node[i] = (int)vdi->header[0x192 + i];
+                    //std::cout<< std::hex << (int)vdi->header[0x192 + i] << '\t' << std::hex << (int)uuid->node[i] << std::endl;
+                    snapuuid->node[i] = (int)vdi->header[0x1a2 + i];
+                    uuidlink->node[i] = (int)vdi->header[0x1b2 + i];
+                    parentuuid->node[i] = (int)vdi->header[0x1c2 + i];
 
         }
+        //std::cout << std::hex << (int)uuid->timeLow << "-" <<std::hex << (int)uuid->timeMid << "-"<< std::hex <<uuid->timeHigh << "-" << std::hex << uuid->clock << std::hex << uuid->node << std::endl;
+        printf("%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x\n",
+                uuid->timeLow,uuid->timeMid,uuid->timeHigh,uuid->clock,
+                uuid->node[0],uuid->node[1],uuid->node[2],uuid->node[3],
+                uuid->node[4],uuid->node[5]);
 
-
+        vdi->UUID = uuid2ascii(uuid);
+        vdi->snapUUID = uuid2ascii(snapuuid);
+        vdi->UUIDLink = uuid2ascii(uuidlink);
+        vdi->parentUUID = uuid2ascii(parentuuid);
         //std::cout<< "\n0x" << std::hex<< (int)header[4*16 + 3] << (int)header[4*16+2] << (int)header[4*16+1]<< (int)header[4*16]<< std::endl;
         //std::cout << "0x" << std::hex << imageSignature << std::endl;
         displayvdiHeader(vdi);
+        free(buf);
 
         return vdi;
     }
