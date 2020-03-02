@@ -81,8 +81,11 @@ void displayvdiHeader(struct VDIFile *f){
     std::cout << "Extra Frame Size: 0x" << std::hex << f->extraBlockData << std::endl;
     std::cout << "Frames in HDD: 0x" << std::hex << f->blockCountinHDD << std::endl;
     std::cout << "Frames allocated: 0x" << std::hex << f->blocksAllocated << std::endl;
-    std::cout << "UUID: " << f->UUID << std::endl;
-    std::cout << "UUID of last SNAP: " << f->snapUUID << std::endl;
+    std::cout << "UUID: ";
+    for(int i=0;i<32;i++) {
+     std::cout << f->UUID[i];
+    }
+    std::cout << "\nUUID of last SNAP: " << f->snapUUID << std::endl;
     std::cout << "Link UUID : " << f->UUIDLink << std::endl;
     std::cout << "Parent UUID: " << f->parentUUID << std::endl;
     std::cout << "Image Description: " << f->imageDescription << std::endl;
