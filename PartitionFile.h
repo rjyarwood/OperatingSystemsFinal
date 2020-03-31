@@ -6,15 +6,16 @@
 #define INC_5806FINAL_PARTITIONFILE_H
 
 #include "VDIFile.h"
+#include "PartitionEntry.h"
 
 struct PartitionFile{
-    VDIFile *f;
-    int startLoc;
-    int sizePart;
+    struct VDIFile *vdif;
+    struct PartitionEntry entry;
 };
 
 struct PartitionFile *partitionOpen(struct VDIFile *, struct PartitionEntry *);
 void partitionClose(struct PartitionFile *f);
+ssize_t partitionRead(struct PartitionFile *f, void *buf, size_t count);
 ssize_t partitionWrite(struct PartitionFile *f, void *buf, size_t count);
 off_t partitionSeek(struct PartitionFile *f, off_t offset, int anchor);
 

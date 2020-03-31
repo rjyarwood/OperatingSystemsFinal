@@ -126,6 +126,7 @@
         return vdi;
     }
 
+
     void vdiClose(struct VDIFile *f) {
 
         close(f->fileDescriptor);

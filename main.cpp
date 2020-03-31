@@ -4,9 +4,10 @@
 #include <fstream>
 #include <cstdio>
 #include <cstdlib>
-#include <zconf.h>
 #include "VDIFile.h"
 #include "displayBuffers.cpp.h"
+#include "PartitionFile.h"
+#include "PartitionEntry.h"
 
 
 

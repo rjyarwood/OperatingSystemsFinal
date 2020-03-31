@@ -7,6 +7,12 @@
 
 #include "VDIFile.h"
 
+struct CHS{
+    unsigned char header;
+    unsigned char sectorbits;
+    unsigned char cylinderbits;
+};
+
 struct PartitionEntry{
     unsigned char status;
     struct CHS CHSofFirstSec;
@@ -16,11 +22,6 @@ struct PartitionEntry{
     int LBASectorCount;
 };
 
-struct CHS{
-    unsigned char header;
-    unsigned char sectorbits;
-    unsigned char cylinderbits;
-};
 
 /*
 struct CHS *buildCHS(void*);
