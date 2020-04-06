@@ -5,6 +5,8 @@
 #ifndef INC_5806FINAL_PARTITIONFILE_H
 #define INC_5806FINAL_PARTITIONFILE_H
 
+
+#include <sys/types.h>
 #include "VDIFile.h"
 #include "PartitionEntry.h"
 

@@ -9,35 +9,51 @@
 #include <cstring>
 
 
+
+struct VDIDiskGeometry{
+    unsigned int
+        CylinderCOunt,
+        SectorCount,
+        HeadCount,
+        SectorSize;
+};
+
+struct VDIHeader{
+    char
+        fileInfo[64];
+    uint32_t
+        magic;
+    uint16_t
+        versionMajor,
+        versionMinor;
+    uint32_t
+        postHeaderSize,
+        imageType,
+        imageFlags;
+    struct VDIDiskGeometry
+        oldGeometry;
+    uint32_t
+        pageSize,
+        extraPageSize,
+        nPagesTotal,
+        nPagesAllocated;
+    struct UUID
+        uuidCreate[16],
+        uuidModify[16],
+        uuidPrevImage[16],
+        uuidPrevImageModify[16];
+    struct VDIDiskGeometry
+        diskGeometry;
+};
+
 struct VDIFile {
     int fileDescriptor;
-    unsigned long size;
-    std::string imageName;
-    unsigned int imageSignature;
-    unsigned int version;
-    unsigned int headerSize;
-    unsigned int imageType;
-    unsigned int imageFlags;
-    std::string imageDescription;
-    unsigned int offsetBlocks;
-    unsigned int offsetData;
-    unsigned int cylinderCount;
-    unsigned int sectorCount;
-    unsigned int headCount;
-    unsigned int sectorSize;
-    unsigned long long int diskSize;
-    unsigned int blockSize;
-    unsigned int extraBlockData;
-    unsigned int blockCountinHDD;
-    unsigned int blocksAllocated;
-    char *UUID;
-    char *snapUUID;
-    char *UUIDLink;
-    char *parentUUID;
     size_t cursor;
-    unsigned char* header;
+    unsigned int* map;
+    struct VDIHeader VDIHeader;
     //const int READ_HEADER = 1;
 };
+
 
     struct VDIFile *vdiOpen(char *fn);
 

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <cstdio>
 #include <cstdlib>
+#include <sys/types.h>
 #include "VDIFile.h"
 #include "displayBuffers.cpp.h"
 #include "PartitionFile.h"

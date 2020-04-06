@@ -33,11 +33,29 @@ void partitionClose(struct PartionFile *f){
 
 /*
  * @param f: The PartitionFile to read
- * @param buf: The buffer to be read from
+ * @param buf: The buffer to read to
  * @param count: How much to read
  */
 ssize_t partitionRead(struct PartitionFile *f, void *buf, size_t count){
 
+}
+
+/*
+ * @param f: The PartitionFile to write to.
+ * @param buf: The buffer to be read from
+ * @param count: The amount of characters to be written
+ */
+ssize_t partitionWrite(struct PartitionFile *f, void *buf, size_t count){
+
+}
+
+/*
+ * @param f: The PartitionFile whose cursor will be set
+ * @param offset: How much to move by
+ * @param anchor: Where the offset is in reference to
+ */
+off_t partitionSeek(struct PartitionFile *f, off_t offset, int anchor){
+    lseek()
 }
 
 
