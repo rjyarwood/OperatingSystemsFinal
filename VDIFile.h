@@ -12,36 +12,37 @@
 
 struct VDIDiskGeometry{
     unsigned int
-        CylinderCOunt,
-        SectorCount,
-        HeadCount,
-        SectorSize;
+        cylinderCount,
+        sectorCount,
+        headCount,
+        sectorSize;
 };
 
 struct VDIHeader{
     char
         fileInfo[64];
-    uint32_t
-        magic;
+    //uint32_t
+        //magic;
     uint16_t
-        versionMajor,
-        versionMinor;
+        imageSignature,
+        versionMajor;
+        //versionMinor;
     uint32_t
         postHeaderSize,
         imageType,
         imageFlags;
-    struct VDIDiskGeometry
-        oldGeometry;
+    //struct VDIDiskGeometry
+        //oldGeometry;
     uint32_t
         pageSize,
         extraPageSize,
         nPagesTotal,
         nPagesAllocated;
     struct UUID
-        uuidCreate[16],
-        uuidModify[16],
-        uuidPrevImage[16],
-        uuidPrevImageModify[16];
+        uuidCreate,
+        uuidModify,
+        uuidPrevImage,
+        uuidPrevImageModify;
     struct VDIDiskGeometry
         diskGeometry;
 };
@@ -51,6 +52,7 @@ struct VDIFile {
     size_t cursor;
     unsigned int* map;
     struct VDIHeader VDIHeader;
+    int fileSize;
     //const int READ_HEADER = 1;
 };
 

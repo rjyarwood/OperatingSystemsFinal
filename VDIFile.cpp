@@ -14,116 +14,98 @@
 
 
     struct VDIFile *vdiOpen(char *fn) {
-        VDIFile *vdi = new VDIFile;
+        VDIHeader *vdiHead = new VDIHeader;
+        VDIFile *vdiFile = new VDIFile;
 
-        vdi->fileDescriptor = open(fn, O_CREAT);
-        std::cout<<vdi->fileDescriptor << std::endl;
-        if(vdi->fileDescriptor < 1)
+
+        //Opening the VDIFile and saving file descriptor
+        vdiFile->fileDescriptor = open(fn, O_CREAT);
+        //std::cout<<vdiFile->fileDescriptor << std::endl;
+
+        // If file does not exist
+        if(vdiFile->fileDescriptor < 1)
             std::cout << strerror(errno) << std::endl;
-        vdi->size = lseek(vdi->fileDescriptor,0,SEEK_END);
 
-        vdi->cursor = 0;
+        //Finding size of file using lseek
+        vdiFile->fileSize = lseek(vdiFile->fileDescriptor,0,SEEK_END);
+
+        //Setting cursor to 0
+        vdiFile->cursor = 0;
+
+        //Creating and reading file Header into buffer
         unsigned char *buf = reinterpret_cast<unsigned char *>(static_cast<char *>(malloc(444)));
-        pread(vdi->fileDescriptor, buf,444,0);
-        lseek(vdi->fileDescriptor,0,0);
-        vdi->header = buf;
+        pread(vdiFile->fileDescriptor, buf,444,0);
+        lseek(vdiFile->fileDescriptor,0,0);
 
-        //std::cout << "back in vdiOpen" << std::endl;
-        int i = -1;
-        bool cont = true;
-        while(cont) {
-            i++;
-            //std::cout << i << std::endl;
-            if (isprint(buf[i])) {
-                //std::cout<<"in if" << std::endl;
-                vdi->imageName +=  buf[i];
-            }
-            else
-                cont = false;
+        for(int i=0; i<64; i++) {
+            vdiHead->fileInfo[i] = buf[i];
         }
 
-        struct UUID *uuid = new struct UUID;
-        struct UUID *snapuuid = new struct UUID;
-        struct UUID *uuidlink = new struct UUID;
-        struct UUID *parentuuid = new struct UUID;
 
-
-        //displayBuffer(reinterpret_cast<uint8_t *>(header), 444, 0);
 
         for(int i=0; i<4; i++) {
-                    vdi->imageSignature += (int)vdi->header[0x40 + i] << (8*i);
-                    vdi->version += (int)vdi->header[0x44 + i] << (8*i);
-                    vdi->headerSize += (int)vdi->header[0x48 +i] << (8*i);
-                    vdi->imageType += (int)vdi->header[0x4c + i] << (8*i);
-                    vdi->imageFlags += (int)vdi->header[0x50 + i] << (8*i);
-                    vdi->offsetBlocks += (int)vdi->header[0x154 + i] << (8*i);
-                    vdi->offsetData += (int)vdi->header[0x158 + i] << (8*i);
-                    vdi->cylinderCount += (int)vdi->header[0x15c +i] << (8*i);
-                    vdi->headCount += (int)vdi->header[0x160 + i] << (8*i);
-                    vdi->sectorCount += (int)vdi->header[0x164 + i] << (8*i);
-                    vdi->sectorSize += (int)vdi->header[0x168 + i] << (8*i);
-                    vdi->blockSize += (int)vdi->header[0x178 + i] << (8*i);
-                    vdi->extraBlockData += (int)vdi->header[0x17c + i] << (8*i);
-                    vdi->blockCountinHDD += (int)vdi->header[0x180 + i] << (8*i);
-                    vdi->blocksAllocated += (int)vdi->header[0x184 + i] << (8*i);
 
-                    uuid->timeLow += (int)vdi->header[0x188 + i] << (8*i);
-                    snapuuid->timeLow += (int)vdi->header[0x198 + i] << (8*i);
-                    uuidlink->timeLow += (int)vdi->header[0x1a8 + i] << (8*i);
-                    parentuuid->timeLow += (int)vdi->header[0x1b8 + i] << (8*i);
-        }
+            vdiHead->imageSignature += (int)buf[0x40 + i] << (8*i);
+            vdiHead->versionMajor += (int)buf[0x44 + i] << (8*i);
+            vdiHead->postHeaderSize += (int)buf[0x48 +i] << (8*i);
+            vdiHead->imageType += (int)buf[0x4c + i] << (8*i);
+            vdiHead->imageFlags += (int)buf[0x50 + i] << (8*i);
+            vdiHead->pageSize += (int)buf[0x178 + i] << (8*i);
+            vdiHead->extraPageSize += (int)buf[0x17c + i] << (8*i);
+            vdiHead->nPagesTotal += (int)buf[0x180 + i] << (8*i);
+            vdiHead->nPagesAllocated += (int)buf[0x184 + i] << (8*i);
 
-        for(int i=0; i<8; i++){
-                    vdi->diskSize += (int)vdi->header[0x170 +i] << (8*i);
+            vdiHead->uuidCreate.timeLow += (int)buf[0x188 + i] << (8*i);
+            vdiHead->uuidModify.timeLow += (int)buf[0x198 + i] << (8*i);
+            vdiHead->uuidPrevImage.timeLow += (int)buf[0x1a8 + i] << (8*i);
+            vdiHead->uuidPrevImageModify.timeLow += (int)buf[0x1b8 + i] << (8*i);
+
+
+            vdiHead->diskGeometry.cylinderCount += (int)buf[0x15c +i] << (8*i);
+            vdiHead->diskGeometry.headCount += (int)buf[0x160 + i] << (8*i);
+            vdiHead->diskGeometry.sectorCount += (int)buf[0x164 + i] << (8*i);
+            vdiHead->diskGeometry.sectorSize += (int)buf[0x168 + i] << (8*i);
+
         }
 
         for(int i = 0; i<2; i++){
-                    uuid->timeMid += (int)vdi->header[0x18c +i] << (8*i);
-                    uuid->timeHigh += (int)vdi->header[0x18e +i] << (8*i);
-                    uuid->clock += (int)vdi->header[0x190 +i] << (8*i);
+            vdiHead->uuidCreate.timeMid += (int)buf[0x18c +i] << (8*i);
+            vdiHead->uuidCreate.timeHigh += (int)buf[0x18e +i] << (8*i);
+            vdiHead->uuidCreate.clock += (int)buf[0x190 +i] << (8*i);
 
-                    snapuuid->timeMid += (int)vdi->header[0x19c +i] << (8*i);
-                    snapuuid->timeHigh += (int)vdi->header[0x19e +i] << (8*i);
-                    snapuuid->clock += (int)vdi->header[0x1a0 +i] << (8*i);
+            vdiHead->uuidModify.timeMid += (int)buf[0x19c +i] << (8*i);
+            vdiHead->uuidModify.timeHigh += (int)buf[0x19e +i] << (8*i);
+            vdiHead->uuidModify.clock += (int)buf[0x1a0 +i] << (8*i);
 
-                    uuidlink->timeMid += (int)vdi->header[0x1ac +i] << (8*i);
-                    uuidlink->timeHigh += (int)vdi->header[0x1ae +i] << (8*i);
-                    uuidlink->clock += (int)vdi->header[0x1b0 +i] << (8*i);
+            vdiHead->uuidPrevImage.timeMid += (int)buf[0x1ac +i] << (8*i);
+            vdiHead->uuidPrevImage.timeHigh += (int)buf[0x1ae +i] << (8*i);
+            vdiHead->uuidPrevImage.clock += (int)buf[0x1b0 +i] << (8*i);
 
-                    parentuuid->timeMid += (int)vdi->header[0x1bc +i] << (8*i);
-                    parentuuid->timeHigh += (int)vdi->header[0x1abe +i] << (8*i);
-                    parentuuid->clock += (int)vdi->header[0x1c0 +i] << (8*i);
+            vdiHead->uuidPrevImageModify.timeMid += (int)buf[0x1bc +i] << (8*i);
+            vdiHead->uuidPrevImageModify.timeHigh += (int)buf[0x1abe +i] << (8*i);
+            vdiHead->uuidPrevImageModify.clock += (int)buf[0x1c0 +i] << (8*i);
 
 
         }
 
         for(int i = 0; i<6; i++){
-                    uuid->node[i] = (int)vdi->header[0x192 + i];
-                    //std::cout<< std::hex << (int)vdi->header[0x192 + i] << '\t' << std::hex << (int)uuid->node[i] << std::endl;
-                    snapuuid->node[i] = (int)vdi->header[0x1a2 + i];
-                    uuidlink->node[i] = (int)vdi->header[0x1b2 + i];
-                    parentuuid->node[i] = (int)vdi->header[0x1c2 + i];
+            vdiHead->uuidCreate.node[i] = (int)buf[0x192 + i];
+            vdiHead->uuidModify.node[i] = (int)buf[0x1a2 + i];
+            vdiHead->uuidPrevImage.node[i] = (int)buf[0x1b2 + i];
+            vdiHead->uuidPrevImageModify.node[i] = (int)buf[0x1c2 + i];
 
         }
 
-        //std::cout << std::hex << (int)uuid->timeLow << "-" <<std::hex << (int)uuid->timeMid << "-"<< std::hex <<uuid->timeHigh << "-" << std::hex << uuid->clock << std::hex << uuid->node << std::endl;
-        //printf("%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x\n",
-        //        uuid->timeLow,uuid->timeMid,uuid->timeHigh,uuid->clock,
-        //        uuid->node[0],uuid->node[1],uuid->node[2],uuid->node[3],
-        //        uuid->node[4],uuid->node[5]);
 
-        vdi->UUID = uuid2ascii(uuid);
-        vdi->snapUUID = uuid2ascii(snapuuid);
-        vdi->UUIDLink = uuid2ascii(uuidlink);
-        vdi->parentUUID = uuid2ascii(parentuuid);
+        //Placing vdiHeader into VDIFile?
+        vdiFile->VDIHeader = reinterpret_cast<VDIHeader &&>(vdiHead);
 
-        //std::cout<< "\n0x" << std::hex<< (int)header[4*16 + 3] << (int)header[4*16+2] << (int)header[4*16+1]<< (int)header[4*16]<< std::endl;
-        //std::cout << "0x" << std::hex << imageSignature << std::endl;
-
-        displayvdiHeader(vdi);
+        //sends to display buffer and frees the buffer
+        displayvdiHeader(vdiFile);
         free(buf);
 
-        return vdi;
+        return vdiFile;
+
     }
 
 
