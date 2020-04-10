@@ -6,16 +6,22 @@
 
 struct PartitionEntry *buildPartitionEntry(VDIFile *f){
 
+    PartitionEntry *partitionEntry = new PartitionEntry;
+
     unsigned char *buf = reinterpret_cast<unsigned char *>(static_cast<char *>(malloc(16)));
     vdiRead(f,buf,16);
 
     unsigned char status = buf[0];
 
-    CHS * CHSofFirstSec = new CHS{buf[1], buf[2], buf[3]};
+    partitionEntry->CHSofFirstSect.header = buf[1];
+    partitionEntry->CHSofFirstSect.sectorbits = buf[2];
+    partitionEntry->CHSofFirstSect.cylinderbits = buf[3];
 
     unsigned char PartitionType = buf[4];
 
-    CHS * CHSofLastSec = new CHS{buf[5], buf[6], buf[7]};
+    partitionEntry->CHSofLastSect.header = buf[5];
+    partitionEntry->CHSofLastSect.sectorbits = buf[6];
+    partitionEntry->CHSofLastSect.cylinderbits = buf[7];
 
     int LBAofFirstSect;
     int LBASectorCount;
@@ -25,19 +31,26 @@ struct PartitionEntry *buildPartitionEntry(VDIFile *f){
         LBASectorCount += (int)buf[12 + i] << (8*i);
     }
 
-    return PartitionEntry{status, CHSofFirstSec, PartitionType, CHSofLastSec};
+    return partitionEntry;
 }
 
 
 struct PartitionEntry *buildPartitionEntry(unsigned char buf[]){
 
+    PartitionEntry *partitionEntry = new PartitionEntry;
+
+
     unsigned char status = buf[0];
 
-    CHS * CHSofFirstSec = new CHS{buf[1], buf[2], buf[3]};
+    partitionEntry->CHSofFirstSect.header = buf[1];
+    partitionEntry->CHSofFirstSect.sectorbits = buf[2];
+    partitionEntry->CHSofFirstSect.cylinderbits = buf[3];
 
     unsigned char PartitionType = buf[4];
 
-    CHS * CHSofLastSec = new CHS{buf[5], buf[6], buf[7]};
+    partitionEntry->CHSofLastSect.header = buf[5];
+    partitionEntry->CHSofLastSect.sectorbits = buf[6];
+    partitionEntry->CHSofLastSect.cylinderbits = buf[7];
 
     int LBAofFirstSect;
     int LBASectorCount;
@@ -47,6 +60,6 @@ struct PartitionEntry *buildPartitionEntry(unsigned char buf[]){
         LBASectorCount += (int)buf[12 + i] << (8*i);
     }
 
-    return PartitionEntry{status, CHSofFirstSec, PartitionType, CHSofLastSec};
+    return partitionEntry;
 }
 

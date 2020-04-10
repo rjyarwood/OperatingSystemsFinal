@@ -15,7 +15,7 @@ struct CHS{
 
 struct PartitionEntry{
     unsigned char status;
-    struct CHS CHSofFirstSec;
+    struct CHS CHSofFirstSect;
     struct CHS CHSofLastSect;
     unsigned char partitionType;
     int LBAofFirstSect;

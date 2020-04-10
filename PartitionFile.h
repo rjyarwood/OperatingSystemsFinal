@@ -15,7 +15,7 @@ struct PartitionFile{
     struct PartitionEntry entry;
 };
 
-struct PartitionFile *partitionOpen(struct VDIFile *, struct PartitionEntry *);
+struct PartitionFile *partitionOpen(struct VDIFile *, PartitionEntry);
 void partitionClose(struct PartitionFile *f);
 ssize_t partitionRead(struct PartitionFile *f, void *buf, size_t count);
 ssize_t partitionWrite(struct PartitionFile *f, void *buf, size_t count);

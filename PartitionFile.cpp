@@ -9,14 +9,39 @@
  * @param vdi: The VDIFile that will be placed in the new PartitionFile struct
  * @param pe: The PartitionEntry to be placed in the PartitionFile struct
  */
-PartitionFile* partitionOpen(struct VDIFile *vdi, struct PartitionEntry* pe){
+PartitionFile* partitionOpen(struct VDIFile *vdi, PartitionEntry pe){
 
     /*
      * This should just take the inputs and plug them directly into a PartitionFile struct and return the pointer.
      */
 
-    PartitionFile* partitionFile = new PartitionFile{vdi, pe};
+    PartitionFile* partitionFile = new PartitionFile;
+
+    partitionFile->vdif = vdi;
+    partitionFile->entry = pe;
+
     return partitionFile;
+}
+
+PartitionFile* partitionOpen(struct VDIFile *vdi, PartitionEntry[] pe){
+
+    /*
+     * This should just take the inputs and plug them directly into a PartitionFile struct and return the pointer.
+     */
+
+    PartitionFile* partitionFile = new PartitionFile;
+
+    partitionFile->vdif = vdi;
+    partitionFile->entry = pe;
+
+    return partitionFile;
+}
+
+/*
+ * Adds a partitonEntry to the
+ */
+void addPartitionEntry(struct PartitionFile *file, PartitionEntry Entry){
+
 }
 
 
@@ -27,7 +52,9 @@ void partitionClose(struct PartionFile *f){
     /*
      * This should call vdiClose to close the vdi file associated with this PartitionFile
      */
-    VDIFile *vdiFile = f->vdif;
+    VDIFile *vdiFile = f.vdif;
+
+
     vdiClose(vdiFile);
 }
 
@@ -37,6 +64,8 @@ void partitionClose(struct PartionFile *f){
  * @param count: How much to read
  */
 ssize_t partitionRead(struct PartitionFile *f, void *buf, size_t count){
+
+
 
 }
 
