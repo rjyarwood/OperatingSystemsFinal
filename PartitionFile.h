@@ -10,9 +10,13 @@
 #include "VDIFile.h"
 #include "PartitionEntry.h"
 
+struct PartitionTable{
+    PartitionEntry partitionEntries[4];
+};
+
 struct PartitionFile{
-    struct VDIFile *vdif;
-    struct PartitionEntry entry;
+    struct VDIFile *vdi;
+    struct PartitionTable partitionTable;
 };
 
 struct PartitionFile *partitionOpen(struct VDIFile *, PartitionEntry);
@@ -20,5 +24,6 @@ void partitionClose(struct PartitionFile *f);
 ssize_t partitionRead(struct PartitionFile *f, void *buf, size_t count);
 ssize_t partitionWrite(struct PartitionFile *f, void *buf, size_t count);
 off_t partitionSeek(struct PartitionFile *f, off_t offset, int anchor);
+struct PartitionFile *fillPartitionTable(VDIFile *, PartitionEntry[]);
 
 #endif //INC_5806FINAL_PARTITIONFILE_H
