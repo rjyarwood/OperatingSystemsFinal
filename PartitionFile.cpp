@@ -7,18 +7,21 @@
 
 /*
  * @param vdi: The VDIFile that will be placed in the new PartitionFile struct
- * @param pe: The PartitionEntry to be placed in the PartitionFile struct
+ * @param pe: The PartitionEntry info to be placed in the PartitionFile struct
  */
-PartitionFile* partitionOpen(struct VDIFile *vdi, PartitionTable pt){
+PartitionFile* partitionOpen(struct VDIFile *vdi, PartitionEntry pe){
 
     /*
-     * This should just take the inputs and plug them directly into a PartitionFile struct and return the pointer.
+     * This should just take the given vdi file and place it in the PartitionFile struct and find the start location
+     * and size of the given partition from the PartitionEntry struct
      */
 
     PartitionFile* partitionFile = new PartitionFile;
 
     partitionFile->vdif = vdi;
-    partitionFile->partitionTable = pt;
+    partitionFile->startLoc = pe.LBAofFirstSect * 512;
+    partitionFile->partitionSize = pe.LBASectorCount * 512;
+    partitionFile->cursor = 0;
 
     return partitionFile;
 }
@@ -44,7 +47,17 @@ void partitionClose(struct PartionFile *f){
  */
 ssize_t partitionRead(struct PartitionFile *f, void *buf, size_t count){
 
+    //If the given count would read beyond the partition, set the count to just read to the end
+    if(f->cursor + count > f->partitionSize){
+        count = f->partitionSize - f->cursor;
+    }
 
+    //Calls VDI Seek to set the cursor to the location of the partition and then read count bytes from there
+    vdiSeek(f->vdi, f->startLoc, f->cursor);
+    vdiRead(f->vdi, buf, count);
+
+
+    return count;
 
 }
 
@@ -55,6 +68,17 @@ ssize_t partitionRead(struct PartitionFile *f, void *buf, size_t count){
  */
 ssize_t partitionWrite(struct PartitionFile *f, void *buf, size_t count){
 
+    //If the count would write beyond partition then restrict count to only write to the end
+    if(f->cursor + count > f->partitionSize){
+        count = f->partitionSize - f->cursor;
+    }
+
+    //Call VDISeek to set the cursor and VDIWrite to write to the file
+    vdiSeek(f->vdi, f->startLoc, f->cursor);
+    vdiWrite(f->vdi,buf,count);
+
+    return count;
+
 }
 
 /*
@@ -63,6 +87,18 @@ ssize_t partitionWrite(struct PartitionFile *f, void *buf, size_t count){
  * @param anchor: Where the offset is in reference to
  */
 off_t partitionSeek(struct PartitionFile *f, off_t offset, int anchor){
+
+    if((anchor + offset) > f->partitionSize){
+        return f->cursor;
+    }
+    else if(offset < 0){
+        f->cursor = 0;
+        return f->cursor;
+    }
+    else {
+        f->cursor = anchor + offset;
+        return f->cursor;
+    }
 
 }
 

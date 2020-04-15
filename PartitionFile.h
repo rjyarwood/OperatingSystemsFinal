@@ -16,7 +16,9 @@ struct PartitionTable{
 
 struct PartitionFile{
     struct VDIFile *vdi;
-    struct PartitionTable partitionTable;
+    off_t startLoc;
+    int partitionSize;
+    size_t cursor;
 };
 
 struct PartitionFile *partitionOpen(struct VDIFile *, PartitionEntry);
