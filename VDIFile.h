@@ -21,19 +21,27 @@ struct VDIDiskGeometry{
 struct VDIHeader{
     char
         fileInfo[64];
-    //uint32_t
-        //magic;
-    uint16_t
-        imageSignature,
-        versionMajor;
-        //versionMinor;
-    uint32_t
+    __uint32_t
+        magic;
+    __uint16_t
+        versionMajor,
+        versionMinor;
+    __uint32_t
         postHeaderSize,
         imageType,
         imageFlags;
-    //struct VDIDiskGeometry
-        //oldGeometry;
-    uint32_t
+    char
+        comment[256];
+    __uint32_t
+        mapOffset,
+        dataOffset;
+    struct VDIDiskGeometry
+        oldGeometry;
+    __uint32_t
+        unused;
+    __uint64_t
+        diskSize;
+    __uint32_t
         pageSize,
         extraPageSize,
         nPagesTotal,
