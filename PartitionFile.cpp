@@ -102,29 +102,15 @@ off_t partitionSeek(struct PartitionFile *f, off_t offset, int anchor){
 
 }
 
-struct PartitionFile *fillPartitionTable(VDIFile *vdi, PartitionEntry[] entries){
-
-    unsigned char *buf = reinterpret_cast<unsigned char *>(static_cast<char *>(malloc(64)));
-
-    vdiSeek(vdi, 446, 0);
-    vdiRead(vdi, buf, 64);
+struct PartitionTable *fillPartitionTable(VDIFile *vdi, PartitionEntry[] entries){
 
     PartitionTable partitionTable = new PartitionTable;
 
-    PartitionEntry tempEntry = new PartitionEntry;
 
-    for(int i=0; i<4; i++){
-        tempEntry.status = buf[(i*16)+0];
-        tempEntry.CHSofFirstSect = new CHS {buf[(i*16)+1], buf[(i*16)+2], buf[(i*16)+3]};
-        tempEntry.partitionType = buf[(i*16)+4];
-        tempEntry.CHSofLastSect = new CHS {buf[(i*16)+5], buf[(i*16)+6], buf[(i*16)+7]};
-        tempEntry.LBAofFirstSect = buf[(i*16)+8] + buf[(i*16)+9] << 4 + buf[(i*16)+10] << 8 + buf[(i*16)+11] << 12;
-        tempEntry.LBAofFirstSect = buf[(i*16)+12] + buf[(i*16)+13] << 4 + buf[(i*16)+14] << 8 + buf[(i*16)+15] << 12;
+    vdiSeek(vdi, 446, 0);
+    vdiRead(vdi, partitionTable, 16);
 
-        partitionTable.partitionEntries[i] = tempEntry;
-    }
-
-    return new PartitionFile{vdi, partitionTable};
+    return new partitionTable;
 
 }
 

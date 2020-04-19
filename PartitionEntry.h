@@ -16,10 +16,10 @@ struct CHS{
 struct PartitionEntry{
     unsigned char status;
     struct CHS CHSofFirstSect;
-    struct CHS CHSofLastSect;
     unsigned char partitionType;
-    int LBAofFirstSect;
-    int LBASectorCount;
+    struct CHS CHSofLastSect;
+    __uint16_t LBAofFirstSect;
+    __uint16_t LBASectorCount;
 };
 
 

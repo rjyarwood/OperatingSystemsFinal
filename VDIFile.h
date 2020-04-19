@@ -59,7 +59,7 @@ struct VDIFile {
     int fileDescriptor;
     size_t cursor;
     unsigned int* map;
-    struct VDIHeader VDIHeader;
+    VDIHeader vdiHeader;
     int fileSize;
     //const int READ_HEADER = 1;
 };

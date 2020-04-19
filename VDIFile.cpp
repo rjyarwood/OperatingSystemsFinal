@@ -35,13 +35,13 @@
         //Setting cursor to 0
         vdiFile->cursor = 0;
 
-        read(vdiFile->fileDescriptor, &vdiFile->VDIHeader,sizeof(VDIHeader));
+        read(vdiFile->fileDescriptor, &vdiFile->vdiHeader,sizeof(VDIHeader));
 
-        vdiFile->map = new unsigned int[vdiFile->VDIHeader.nPagesTotal];
+        vdiFile->map = new unsigned int[vdiFile->vdiHeader.nPagesTotal];
 
         //sends to display buffer and frees the buffer
-        lseek(vdiFile->fileDescriptor,vdiFile->VDIHeader.mapOffset,SEEK_SET);
-        read(vdiFile->fileDescriptor,vdiFile->map,vdiFile->VDIHeader.nPagesTotal * sizeof(int));
+        lseek(vdiFile->fileDescriptor,vdiFile->vdiHeader.mapOffset,SEEK_SET);
+        read(vdiFile->fileDescriptor,vdiFile->map,vdiFile->vdiHeader.nPagesTotal * sizeof(int));
 
         return vdiFile;
 
@@ -65,21 +65,21 @@
             offset;
 
 
-        if(f->cursor + count > f->VDIHeader.diskSize){
-            count = f->VDIHeader.diskSize - f->cursor;
+        if(f->cursor + count > f->vdiHeader.diskSize){
+            count = f->vdiHeader.diskSize - f->cursor;
         }
 
         while(count > 0){
 
-            bytesToRead = f->VDIHeader.pageSize - (f->cursor % f->VDIHeader.pageSize);
+            bytesToRead = f->vdiHeader.pageSize - (f->cursor % f->vdiHeader.pageSize);
 
             if(bytesToRead > count){
                 bytesToRead = count;
             }
 
             //Translate Page
-            pageNumber = f->cursor / f->VDIHeader.pageSize;
-            offset = f->cursor % f->VDIHeader.pageSize;
+            pageNumber = f->cursor / f->vdiHeader.pageSize;
+            offset = f->cursor % f->vdiHeader.pageSize;
 
             pageNumber = f->map[pageNumber];
 
@@ -88,7 +88,7 @@
                 bytesRead += bytesToRead;
             }
             else{
-                lseek(f->fileDescriptor, f->VDIHeader.dataOffset + (pageNumber * f->VDIHeader.pageSize) + offset, SEEK_SET);
+                lseek(f->fileDescriptor, f->vdiHeader.dataOffset + (pageNumber * f->vdiHeader.pageSize) + offset, SEEK_SET);
                 read(f->fileDescriptor, (char*)buf + bytesRead, bytesToRead);
                 bytesRead += bytesToRead;
             }
@@ -113,57 +113,63 @@
         char*
                 tmp;
 
-        if(f->cursor + count > f->VDIHeader.diskSize){
-            count = f->VDIHeader.diskSize - f->cursor;
+        if(f->cursor + count > f->vdiHeader.diskSize){
+            count = f->vdiHeader.diskSize - f->cursor;
         }
 
         while(count > 0){
 
-            bytesToWrite = f->VDIHeader.pageSize - (f->cursor % f->VDIHeader.pageSize);
+            bytesToWrite = f->vdiHeader.pageSize - (f->cursor % f->vdiHeader.pageSize);
 
             if(bytesToWrite > count){
                 bytesToWrite = count;
             }
 
             //Translate Page
-            pageNumber = f->cursor / f->VDIHeader.pageSize;
-            offset = f->cursor % f->VDIHeader.pageSize;
+            pageNumber = f->cursor / f->vdiHeader.pageSize;
+            offset = f->cursor % f->vdiHeader.pageSize;
 
             pageNumber = f->map[pageNumber];
 
             if(pageNumber < 0){
 
-                tmp = new char[f->VDIHeader.pageSize];
+                tmp = new char[f->vdiHeader.pageSize];
                 if(tmp == nullptr){
                     break;
                 }
 
-                memset(tmp, 0, f->VDIHeader.pageSize);
+                memset(tmp, 0, f->vdiHeader.pageSize);
                 lseek(f->fileDescriptor, 0, SEEK_SET);
-                n = write(f->fileDescriptor,tmp,f->VDIHeader);
+                n = write(f->fileDescriptor,tmp, f->vdiHeader.pageSize);
 
                 delete[] tmp;
 
-                f->map[pageNumber] = f->VDIHeader.nPagesAllocated;
+                f->map[pageNumber] = f->vdiHeader.nPagesAllocated;
 
-                pageNumber = f->VDIHeader.nPagesAllocated;
+                pageNumber = f->vdiHeader.nPagesAllocated;
 
-                f->VDIHeader.nPagesAllocated++;
+                f->vdiHeader.nPagesAllocated++;
 
                 lseek(f->fileDescriptor,0,SEEK_SET);
-                write(f->fileDescriptor, &f->VDIHeader, sizeof(f->VDIHeader));
+                write(f->fileDescriptor, &f->vdiHeader, sizeof(f->vdiHeader));
 
-                lseek(f->fileDescriptor,f->VDIHeader.mapOffset,SEEK_SET);
-                write(f->fileDescriptor,f->map,f->VDIHeader.nPagesTotal * sizeof(int));
+                lseek(f->fileDescriptor,f->vdiHeader.mapOffset,SEEK_SET);
+                write(f->fileDescriptor,f->map,f->vdiHeader.nPagesTotal * sizeof(int));
 
             }
 
-            lseek(f->fileDescriptor, f->VDIHeader.dataOffset + (pageNumber * f->VDIHeader.pageSize) + offset, SEEK_SET);
+            lseek(f->fileDescriptor, f->vdiHeader.dataOffset + (pageNumber * f->vdiHeader.pageSize) + offset, SEEK_SET);
             write(f->fileDescriptor, (char*)buf + bytesWritten, bytesToWrite);
             bytesWritten += bytesToWrite;
 
+            /*
             //Write out VDIHeader & map back to file
+            lseek(f->fileDescriptor,0,0);
+            write(f->fileDescriptor,&f->vdiHeader, sizeof(f->vdiHeader));
 
+            lseek(f->fileDescriptor,f->vdiHeader.mapOffset,0);
+            write(f->fileDescriptor,f->map, sizeof(f->map));
+            */
 
             count -= bytesToWrite;
         }
@@ -181,10 +187,10 @@
             newLocation = f->cursor + offset;
         }
         else{
-            newLocation = f->VDIHeader.diskSize - offset;
+            newLocation = f->vdiHeader.diskSize - offset;
         }
 
-        if(newLocation >= 0 && newLocation < f->VDIHeader.diskSize){
+        if(newLocation >= 0 && newLocation < f->vdiHeader.diskSize){
             f->cursor = newLocation;
         }
 
