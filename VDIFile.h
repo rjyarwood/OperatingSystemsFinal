@@ -61,7 +61,6 @@ struct VDIFile {
     unsigned int* map;
     VDIHeader vdiHeader;
     int fileSize;
-    //const int READ_HEADER = 1;
 };
 
 

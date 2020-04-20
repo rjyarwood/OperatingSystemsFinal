@@ -67,23 +67,23 @@ void displayBuffer(uint8_t *buf,int32_t count,uint64_t offset){
 }
 
 void displayvdiHeader(struct VDIFile*f){
-    std::cout << "Image Name: " << f->VDIHeader->fileInfo << std::endl;
-    std::cout << "Signature: 0x" << std::hex << f->VDIHeader->imageSignature << std::endl;
-    std::cout << "Version: " << f->VDIHeader->versionMajor << std::endl;
-    std::cout << "Header Size: 0x" << std::hex << f->VDIHeader->postHeaderSize << std::endl;
-    std::cout << "Image type: 0x" << std::hex << f->VDIHeader->imageType << std::endl;
-    std::cout << "Flags: 0x" << std::hex << f->VDIHeader->imageFlags << std::endl;
-    std::cout << "Frame offset: 0x" << std::hex << f->offsetBlocks << std::endl;
-    std::cout << "Offset Data: 0x" << std::hex << f->offsetData << std::endl;
-    std::cout << "Cylinder Count 0x" << std::hex << f->VDIHeader->diskGeometry.cylinderCount << std::endl;
-    std::cout << "Head Count 0x" << std::hex << f->VDIHeader->diskGeometry.headCount << std::endl;
-    std::cout << "Sector count: 0x" << std::hex << f->VDIHeader->diskGeometry.sectorCount << std::endl;
-    std::cout << "Sector Size: 0x" << std::hex << f->VDIHeader->diskGeometry.sectorSize << std::endl;
+    std::cout << "Image Name: " << f->vdiHeader.fileInfo << std::endl;
+    std::cout << "Signature: 0x" << std::hex << f->vdiHeader.magic << std::endl;
+    std::cout << "Version: " << f->vdiHeader.versionMajor << "." << f->vdiHeader.versionMinor << std::endl;
+    std::cout << "Header Size: 0x" << std::hex << f->vdiHeader.dataOffset << std::endl;
+    std::cout << "Image type: 0x" << std::hex << f->vdiHeader->imageType << std::endl;
+    std::cout << "Flags: 0x" << std::hex << f->vdiHeader->imageFlags << std::endl;
+    std::cout << "Frame offset: 0x" << std::hex << f->vdiHeader.mapOffset << std::endl;
+    std::cout << "Offset Data: 0x" << std::hex << f->map << std::endl;
+    std::cout << "Cylinder Count 0x" << std::hex << f->vdiHeader->diskGeometry.cylinderCount << std::endl;
+    std::cout << "Head Count 0x" << std::hex << f->vdiHeader->diskGeometry.headCount << std::endl;
+    std::cout << "Sector count: 0x" << std::hex << f->vdiHeader->diskGeometry.sectorCount << std::endl;
+    std::cout << "Sector Size: 0x" << std::hex << f->vdiHeader->diskGeometry.sectorSize << std::endl;
     std::cout << "Disk Size: 0x" << std::hex << f->fileSize << std::endl;
-    std::cout << "Frame Size: 0x" << std::hex << f->VDIHeader->pageSize << std::endl;
-    std::cout << "Extra Frame Size: 0x" << std::hex << f->VDIHeader->extraPageSize << std::endl;
-    std::cout << "Frames in HDD: 0x" << std::hex << f->VDIHeader.nPagesTotal << std::endl;
-    std::cout << "Frames allocated: 0x" << std::hex << f->VDIHeader.nPagesAllocated << std::endl;
+    std::cout << "Frame Size: 0x" << std::hex << f->vdiHeader->pageSize << std::endl;
+    std::cout << "Extra Frame Size: 0x" << std::hex << f->vdiHeader->extraPageSize << std::endl;
+    std::cout << "Frames in HDD: 0x" << std::hex << f->vdiHeader.nPagesTotal << std::endl;
+    std::cout << "Frames allocated: 0x" << std::hex << f->vdiHeader.nPagesAllocated << std::endl;
     std::cout << "UUID: ";
 
    /* for(int i=0;i<32;i++) {
