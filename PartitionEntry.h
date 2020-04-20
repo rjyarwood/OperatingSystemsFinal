@@ -18,8 +18,8 @@ struct PartitionEntry{
     struct CHS CHSofFirstSect;
     unsigned char partitionType;
     struct CHS CHSofLastSect;
-    __uint16_t LBAofFirstSect;
-    __uint16_t LBASectorCount;
+    __uint32_t LBAofFirstSect;
+    __uint32_t LBASectorCount;
 };
 
 

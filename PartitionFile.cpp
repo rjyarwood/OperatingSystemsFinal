@@ -16,9 +16,15 @@ PartitionFile* partitionOpen(struct VDIFile *vdi, PartitionEntry pe){
      * and size of the given partition from the PartitionEntry struct
      */
 
-    PartitionFile* partitionFile = new PartitionFile;
+    //Will this work instead of the method below?
+    PartitionFile* partitionFile = new PartitionFile{
+        vdi,
+        pe.LBAofFirstSect * 512,
+        pe.LBASectorCount * 512,
+        SEEK_SET;
+    };
 
-    partitionFile->vdif = vdi;
+    partitionFile->vdi = vdi;
     partitionFile->startLoc = pe.LBAofFirstSect * 512;
     partitionFile->partitionSize = pe.LBASectorCount * 512;
     partitionFile->cursor = SEEK_SET;
@@ -38,6 +44,7 @@ void partitionClose(struct PartionFile *f){
 
 
     vdiClose(vdiFile);
+    delete f;
 }
 
 /*
@@ -53,7 +60,7 @@ ssize_t partitionRead(struct PartitionFile *f, void *buf, size_t count){
     }
 
     //Calls VDI Seek to set the cursor to the location of the partition and then read count bytes from there
-    vdiSeek(f->vdi, f->startLoc, f->cursor);
+    vdiSeek(f->vdi, f->cursor, SEEK_SET);
     vdiRead(f->vdi, buf, count);
 
 
@@ -74,7 +81,7 @@ ssize_t partitionWrite(struct PartitionFile *f, void *buf, size_t count){
     }
 
     //Call VDISeek to set the cursor and VDIWrite to write to the file
-    vdiSeek(f->vdi, f->startLoc, f->cursor);
+    vdiSeek(f->vdi, f->cursor, SEEK_SET);
     vdiWrite(f->vdi,buf,count);
 
     return count;
@@ -88,30 +95,36 @@ ssize_t partitionWrite(struct PartitionFile *f, void *buf, size_t count){
  */
 off_t partitionSeek(struct PartitionFile *f, off_t offset, int anchor){
 
-    if((anchor + offset) > f->partitionSize){
-        return f->cursor;
+    size_t newLocation;
+
+    if(anchor == SEEK_SET){
+        newLocation = offset;
     }
-    else if(offset < 0){
-        f->cursor = 0;
-        return f->cursor;
+    else if(anchor == SEEK_CUR){
+        newLocation = f->cursor + offset;
     }
-    else {
-        f->cursor = anchor + offset;
-        return f->cursor;
+    else{
+        newLocation = f->partitionSize - offset;
     }
+
+    if(newLocation >= 0 && newLocation < f->partitionSize){
+        f->cursor = newLocation;
+    }
+
+
+    return f->cursor;
 
 }
 
-struct PartitionTable *fillPartitionTable(VDIFile *vdi, PartitionEntry[] entries){
+struct PartitionTable *fillPartitionTable(VDIFile *vdi){
 
     PartitionTable partitionTable = new PartitionTable;
 
 
     vdiSeek(vdi, 446, SEEK_SET);
-    vdiRead(vdi, partitionTable, 16);
+    vdiRead(vdi, partitionTable, 64);
 
     return new partitionTable;
-
 }
 
 

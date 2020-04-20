@@ -8,7 +8,7 @@
 #include <cstdint>
 
 
-const unsigned char LINUX_PARTITION = 1;
+const unsigned char LINUX_PARTITION = 0x83;
 
 
 struct Ext2SuperBlock{
@@ -26,7 +26,7 @@ struct Ext2SuperBlock{
         inodesPerGroup,
         mtime,
         wtime;
-    __uint8_t
+    __uint16_t
         mntCount,
         maxmntCount,
         magic,
@@ -56,13 +56,14 @@ struct BlockGroup{
 };
 
 struct Ext2File{
-    int fileDescriptor;
     struct Ext2SuperBlock
             superBlock;
     struct BlockGroup
-            blockGroup;
+            *blockGroup;
     PartitionFile
             *partitionFile;
+    int blockSize;
+    unsigned int blockGroupCount;
 };
 
 struct Ext2File *ext2Open(char *fn, int32_t pNum);

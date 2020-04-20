@@ -17,9 +17,6 @@ struct UUID {
             node[6];
 };
 
-static char
-        uuidStr[32];
-
 //-----------------------------------------------------------------------------
 // static char *uuid2ascii(uint8_t *uuid)
 //  convert UUID to ascii hex form

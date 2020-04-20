@@ -6,10 +6,18 @@
 #include <exception>
 using namespace std;
 
-class exceptions: public exception
+class BadIndex: public exception
 {
     virtual const char* what() const throw()
     {
         return "Invalid Index";
     }
 } badIndex;
+
+class BadSuperBlock: public exception
+{
+    virtual const char* what() const throw()
+    {
+        return "Not a valid SuperBlock";
+    }
+} invalidSuperBlock;

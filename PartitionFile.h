@@ -16,8 +16,8 @@ struct PartitionTable{
 
 struct PartitionFile{
     struct VDIFile *vdi;
-    off_t startLoc;
-    int partitionSize;
+    size_t startLoc;
+    size_t partitionSize;
     size_t cursor;
 };
 
@@ -26,6 +26,6 @@ void partitionClose(struct PartitionFile *f);
 ssize_t partitionRead(struct PartitionFile *f, void *buf, size_t count);
 ssize_t partitionWrite(struct PartitionFile *f, void *buf, size_t count);
 off_t partitionSeek(struct PartitionFile *f, off_t offset, int anchor);
-struct PartitionTable *fillPartitionTable(VDIFile *, PartitionEntry[]);
+struct PartitionTable *fillPartitionTable(VDIFile *);
 
 #endif //INC_5806FINAL_PARTITIONFILE_H
