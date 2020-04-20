@@ -21,7 +21,7 @@ PartitionFile* partitionOpen(struct VDIFile *vdi, PartitionEntry pe){
     partitionFile->vdif = vdi;
     partitionFile->startLoc = pe.LBAofFirstSect * 512;
     partitionFile->partitionSize = pe.LBASectorCount * 512;
-    partitionFile->cursor = 0;
+    partitionFile->cursor = SEEK_SET;
 
     return partitionFile;
 }
@@ -107,7 +107,7 @@ struct PartitionTable *fillPartitionTable(VDIFile *vdi, PartitionEntry[] entries
     PartitionTable partitionTable = new PartitionTable;
 
 
-    vdiSeek(vdi, 446, 0);
+    vdiSeek(vdi, 446, SEEK_SET);
     vdiRead(vdi, partitionTable, 16);
 
     return new partitionTable;

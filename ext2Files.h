@@ -11,7 +11,7 @@
 const unsigned char LINUX_PARTITION = 1;
 
 
-struct SuperBlock{
+struct Ext2SuperBlock{
     __uint32_t
         inodesCount,
         blocksCount,
@@ -56,16 +56,22 @@ struct BlockGroup{
 };
 
 struct Ext2File{
-    struct SuperBlock
+    int fileDescriptor;
+    struct Ext2SuperBlock
             superBlock;
     struct BlockGroup
             blockGroup;
+    PartitionFile
+            *partitionFile;
 };
 
 struct Ext2File *ext2Open(char *fn, int32_t pNum);
-
-
 void ext2Close(struct Ext2File *f);
-//Close the file whose pointer is given. Deallocate any dynamically created memory regions.
+
+int32_t fetchBlock(struct Ext2File*, uint32_t, void *);
+int32_t writeBlock(struct Ext2File*, uint32_t, void *);
+
+int32_t fetchSuperblock(struct Ext2File*,uint32_t, struct Ext2SuperBlock*);
+int32_t writeSuperblock(struct Ext2File*,uint32_t, struct Ext2SuperBlock*);
 
 #endif //INC_5806FINAL_EXT2FILES_H
