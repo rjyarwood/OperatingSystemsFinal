@@ -43,16 +43,16 @@ struct Ext2File *ext2Open(char *fn,int32_t pNum){
     //Creating Ext2File object to be returned later
     Ext2File *ext2File = new Ext2File;
     ext2File->partitionFile = partitionFile;
-    ext2File->blockSize = 1024 << ext2File->superBlock.logBlockSize;
-    ext2File->blockGroupCount = (ext2File->superBlock.blocksCount + ext2File->superBlock.blocksPerGroup -1) / ext2File->superBlock.blocksPerGroup;
+    ext2File->blockSize = 1024 << ext2File->superBlock.s_log_block_size;
+    ext2File->blockGroupCount = (ext2File->superBlock.s_blocks_count + ext2File->superBlock.s_blocks_per_group -1) / ext2File->superBlock.s_blocks_per_group;
 
     //Seeking to start of superblock and reading
     partitionSeek(ext2File->partitionFile, 1024, SEEK_SET);
     partitionRead(ext2File->partitionFile, &ext2File->superBlock, sizeof(ext2File->superBlock));
 
     //Seeking to next block to read group descriptor table
-    partitionSeek(ext2File->partitionFile, (ext2File->superBlock.firstDataBlock + 1) * ext2File->blockSize, SEEK_SET);
-    partitionRead(ext2File->partitionFile, &ext2File->blockGroup, sizeof(ext2File->blockGroup));
+    partitionSeek(ext2File->partitionFile, (ext2File->superBlock.s_first_data_block + 1) * ext2File->blockSize, SEEK_SET);
+    partitionRead(ext2File->partitionFile, &ext2File->blockGroup, sizeof(Ext2BlockGroupDescriptor));
 
 
     return ext2File;
@@ -69,7 +69,7 @@ void ext2Close(struct Ext2File *f){
 int32_t fetchBlock(struct Ext2File *f, uint32_t blockNum, void *buf){
 
     //First ensure the blockNum is valid
-    if(blockNum < 0 || blockNum >= f->superBlock.blocksCount)
+    if(blockNum < 0 || blockNum >= f->superBlock.s_blocks_count)
         throw badIndex;
 
     try {
@@ -89,7 +89,7 @@ int32_t fetchBlock(struct Ext2File *f, uint32_t blockNum, void *buf){
 int32_t writeBlock(struct Ext2File *f, uint32_t blockNum, void *buf){
 
     //First ensure the blockNum is valid
-    if(blockNum < 0 || blockNum > f->superBlock.blocksCount)
+    if(blockNum < 0 || blockNum >= f->superBlock.s_blocks_count)
         throw badIndex;
 
 
@@ -113,19 +113,19 @@ int32_t fetchSuperblock(struct Ext2File *f,uint32_t blockNum, struct Ext2SuperBl
     unsigned char *tempBlock = new unsigned char[f->blockSize];
 
     //First ensure the blockNum is valid
-    if(blockNum < 0 || blockNum > f->superBlock.blocksCount)
+    if(blockNum < 0 || blockNum >= f->superBlock.s_blocks_count)
         throw badIndex;
 
     try {
 
         //If valid index seek to block location
-        partitionSeek(f->partitionFile, blockNum*f->blockSize, f->partitionFile->startLoc);
         fetchBlock(f, blockNum, tempBlock);
 
         memcpy(sb, tempBlock, 1024);
 
+
         //Checking to see if a valid superblock
-        if(sb->magic == 0xef53){
+        if(sb->s_magic == 0xef53){
             return 0;
         }
         else{
@@ -140,4 +140,116 @@ int32_t fetchSuperblock(struct Ext2File *f,uint32_t blockNum, struct Ext2SuperBl
     }
 
 }
+
+int32_t writeSuperblock(struct Ext2File* f,uint32_t blockNum, struct Ext2SuperBlock* sb){
+
+    unsigned char *tempBlock = new unsigned char[f->blockSize];
+
+    //First ensure the blockNum is valid
+    if(blockNum < 0 || blockNum >= f->superBlock.s_blocks_count)
+        throw badIndex;
+
+    try {
+
+        memcpy(tempBlock, sb, 1024);
+
+        //If valid index seek to block location
+        writeBlock(f, blockNum, tempBlock);
+        return 0;
+
+    }
+    catch(int errorNo)
+    {
+        std::cout << "Exception N. " << errorNo << "was thrown in fetchBlock" << std::endl;
+        return errorNo;
+    }
+}
+
+
+int32_t fetchBGDT(struct Ext2File *f, uint32_t blockNum, struct Ext2BlockGroupDescriptor *bgdt){
+
+    // Initialize the descriptor table to be the right size as each block group has a descriptor to be stored
+    bgdt = new Ext2BlockGroupDescriptor[f->blockGroupCount - blockNum];
+
+
+    int descriptorsPerBlock= f->blockSize / 32;
+    int blocksNeeded = ((f->blockGroupCount -blockNum)+ (descriptorsPerBlock -1)) / descriptorsPerBlock;
+    auto *tempBlock = new unsigned char[f->blockSize];
+    auto *tempTable = new Ext2BlockGroupDescriptor[descriptorsPerBlock];
+
+    // Ensure the blockNum is valid
+    if(blockNum < 0 || blockNum >= f->superBlock.s_blocks_count)
+        throw badIndex;
+
+    try {
+        for(int i=0; i < blocksNeeded; i++) {
+
+            partitionSeek(f->partitionFile, (blockNum + i) * f->blockSize, f->partitionFile->startLoc);
+            fetchBlock(f, blockNum+i, tempBlock);
+
+            memcpy(tempTable, tempBlock, f->blockSize - (f->blockSize%32));
+
+            for(int j=0; j < descriptorsPerBlock; j++){
+                bgdt[(i*descriptorsPerBlock) + j] = tempTable[j];
+            }
+        }
+
+        delete[] tempBlock;
+        delete[] tempTable;
+        return 0;
+        
+    }
+    catch(int errorNo)
+    {
+        std::cout << "Exception N. " << errorNo << "was thrown in fetchBGDT" << std::endl;
+        return errorNo;
+    }
+
+
+
+}
+
+// ASK KRAMER
+int32_t writeBGDT(struct Ext2File *f, uint32_t blockNum, struct Ext2BlockGroupDescriptor *bgdt){
+
+
+    int descriptorsPerBlock= f->blockSize / 32;
+    int blocksNeeded = (sizeof(bgdt) / sizeof(bgdt[0]) + (descriptorsPerBlock -1)) / descriptorsPerBlock;
+    auto *tempBlock = new unsigned char[f->blockSize];
+    auto *tempTable = new Ext2BlockGroupDescriptor[descriptorsPerBlock];
+
+    // Ensure the blockNum is valid
+    if(blockNum < 0 || blockNum >= f->superBlock.s_blocks_count)
+        throw badIndex;
+
+    try {
+        for(int i=0; i < blocksNeeded; i++) {
+
+            partitionSeek(f->partitionFile, (blockNum + i) * f->blockSize, f->partitionFile->startLoc);
+            fetchBlock(f, blockNum+i, tempBlock);
+
+            memcpy(tempTable, tempBlock, f->blockSize - (f->blockSize%32));
+
+            for(int j=0; j < descriptorsPerBlock; j++){
+                bgdt[(i*descriptorsPerBlock) + j] = tempTable[j];
+            }
+        }
+
+        delete[] tempBlock;
+        delete[] tempTable;
+        return 0;
+
+    }
+    catch(int errorNo)
+    {
+        std::cout << "Exception N. " << errorNo << "was thrown in fetchBGDT" << std::endl;
+        return errorNo;
+    }
+
+
+
+}
+
+
+
 

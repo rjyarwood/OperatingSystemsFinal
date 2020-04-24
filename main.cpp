@@ -9,6 +9,8 @@
 #include "displayBuffers.cpp.h"
 #include "PartitionFile.h"
 #include "PartitionEntry.h"
+#include "ext2Files.h"
+#include "Inode.h"
 
 
 
