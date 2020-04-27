@@ -51,7 +51,10 @@ struct Inode {
 #pragma clang diagnostic pop
 };
 
-int32_t fetchInode(struct Ext2File, uint32_t, struct Inode);
-int32_t writeInode(struct Ext2File, uint32_t, struct Inode);
+int32_t fetchInode(struct Ext2File*, uint32_t, struct Inode);
+int32_t writeInode(struct Ext2File*, uint32_t, struct Inode);
+int32_t inodeInUse(struct Ext2File*,uint32_t);
+uint32_t allocateInode(struct Ext2File*,int32_t);
+int32_t freeInode(struct Ext2File*,uint32_t);
 
 #endif //INC_5806FINAL_INODE_H

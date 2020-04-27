@@ -8,6 +8,7 @@
 #include <cstdint>
 #include "PartitionEntry.h"
 #include "ext2Files.h"
+#include "Inode.h"
 
 void displayBufferPage(uint8_t *buf, uint32_t count, uint32_t start, uint64_t offset);
 
@@ -18,5 +19,6 @@ void displayCHS(CHS);
 void displaySuperblockContent(struct Ext2Files);
 void displaySuperblockContent(struct Ext2SuperBlock);
 void displayBlockGroupDescriptorTable(struct Ext2BlockGroupDescriptor);
+void displayInode(struct Inode);
 
-#endif //INC_5806FINAL_DISPLAYBUFFERS_H
+#endif //INC_5806FINAL_DISPLAYBUFFERS_H806FINAL_DISPLAYBUFFERS_H

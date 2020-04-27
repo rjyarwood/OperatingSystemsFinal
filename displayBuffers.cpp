@@ -228,3 +228,29 @@ void displayBlockGroupDescriptorTable(struct Ext2BlockGroupDescriptor *e) {
     }
 
 }
+
+void displayInode(struct Inode *i) {
+    std::cout << "Mode: " << i->i_mode << std::endl;
+    std::cout << "Size: " << i->i_size << std::endl;
+    std::cout << "Blocks: " << i->i_blocks << std::endl;
+    std::cout << "UID / GID: " << i->i_uid << " / " << i->i_gid << std::endl;
+    std::cout << "Links: " << i->i_links_count << std::endl;
+    std::cout << "Created: " << i->i_ctime << std::endl;
+    std::cout << "Last access: " << i->i_atime << std::endl;
+    std::cout << "Last modification: " << i->i_mtime << std::endl;
+    std::cout << "Deleted: " << i->i_dtime << std::endl;
+    std::cout << "Flags: " << i->i_flags << std::endl;
+    std::cout << "File version: " << i->i_generation << std::endl; // IS THIS RIGHT?
+    std::cout << "ACL block: " << i->i_file_acl << std::endl;
+    std::cout << "Direct blocks: " << std::endl;
+    std::cout << "0-3: " << i->i_block[0] << std::setw(3) << i->i_block[1] << std::setw(3)
+              << i->i_block[2] << std::setw(3) << i->i_block[3] << std::endl;
+    std::cout << "4-7: " << i->i_block[4] << std::setw(3) << i->i_block[5] << std::setw(3)
+              << i->i_block[6] << std::setw(3) << i->i_block[7] << std::endl;
+    std::cout << "8-11: " << i->i_block[8] << std::setw(3) << i->i_block[9] << std::setw(3)
+              << i->i_block[10] << std::setw(3) << i->i_block[11] << std::endl;
+    std::cout << "Single indirect block: " << "0" << std::endl; //Where is this?
+    std::cout << "Double indirect block: " << "0" << std::endl; //And this?
+    std::cout << "Triple indirect block: " << "0" << std::endl; //And this?
+
+}

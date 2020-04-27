@@ -165,7 +165,7 @@ int32_t writeSuperblock(struct Ext2File* f,uint32_t blockNum, struct Ext2SuperBl
     }
 }
 
-
+// ASK KRAMER
 int32_t fetchBGDT(struct Ext2File *f, uint32_t blockNum, struct Ext2BlockGroupDescriptor *bgdt){
 
     // Initialize the descriptor table to be the right size as each block group has a descriptor to be stored
