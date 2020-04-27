@@ -7,6 +7,8 @@
 #include <iomanip>
 #include "VDIFile.h"
 #include "PartitionEntry.h"
+#include "ext2Files.h"
+//#include "uuid2ascii.cpp"
 
 void displayCHS(CHS chs);
 
@@ -71,28 +73,28 @@ void displayvdiHeader(struct VDIFile*f){
     std::cout << "Signature: 0x" << std::hex << f->vdiHeader.magic << std::endl;
     std::cout << "Version: " << f->vdiHeader.versionMajor << "." << f->vdiHeader.versionMinor << std::endl;
     std::cout << "Header Size: 0x" << std::hex << f->vdiHeader.dataOffset << std::endl;
-    std::cout << "Image type: 0x" << std::hex << f->vdiHeader->imageType << std::endl;
-    std::cout << "Flags: 0x" << std::hex << f->vdiHeader->imageFlags << std::endl;
+    std::cout << "Image type: 0x" << std::hex << f->vdiHeader.imageType << std::endl;
+    std::cout << "Flags: 0x" << std::hex << f->vdiHeader.imageFlags << std::endl;
     std::cout << "Frame offset: 0x" << std::hex << f->vdiHeader.mapOffset << std::endl;
     std::cout << "Offset Data: 0x" << std::hex << f->map << std::endl;
-    std::cout << "Cylinder Count 0x" << std::hex << f->vdiHeader->diskGeometry.cylinderCount << std::endl;
-    std::cout << "Head Count 0x" << std::hex << f->vdiHeader->diskGeometry.headCount << std::endl;
-    std::cout << "Sector count: 0x" << std::hex << f->vdiHeader->diskGeometry.sectorCount << std::endl;
-    std::cout << "Sector Size: 0x" << std::hex << f->vdiHeader->diskGeometry.sectorSize << std::endl;
+    std::cout << "Cylinder Count 0x" << std::hex << f->vdiHeader.diskGeometry.cylinderCount << std::endl;
+    std::cout << "Head Count 0x" << std::hex << f->vdiHeader.diskGeometry.headCount << std::endl;
+    std::cout << "Sector count: 0x" << std::hex << f->vdiHeader.diskGeometry.sectorCount << std::endl;
+    std::cout << "Sector Size: 0x" << std::hex << f->vdiHeader.diskGeometry.sectorSize << std::endl;
     std::cout << "Disk Size: 0x" << std::hex << f->fileSize << std::endl;
-    std::cout << "Frame Size: 0x" << std::hex << f->vdiHeader->pageSize << std::endl;
-    std::cout << "Extra Frame Size: 0x" << std::hex << f->vdiHeader->extraPageSize << std::endl;
+    std::cout << "Frame Size: 0x" << std::hex << f->vdiHeader.pageSize << std::endl;
+    std::cout << "Extra Frame Size: 0x" << std::hex << f->vdiHeader.extraPageSize << std::endl;
     std::cout << "Frames in HDD: 0x" << std::hex << f->vdiHeader.nPagesTotal << std::endl;
     std::cout << "Frames allocated: 0x" << std::hex << f->vdiHeader.nPagesAllocated << std::endl;
     std::cout << "UUID: ";
 
-   /* for(int i=0;i<32;i++) {
-     std::cout << f->UUID[i];
-    }
-    std::cout << "\nUUID of last SNAP: " << f->snapUUID << std::endl;
-    std::cout << "Link UUID : " << f->UUIDLink << std::endl;
-    std::cout << "Parent UUID: " << f->parentUUID << std::endl;
-    */
+    /* for(int i=0;i<32;i++) {
+      std::cout << f->UUID[i];
+     }
+     std::cout << "\nUUID of last SNAP: " << f->snapUUID << std::endl;
+     std::cout << "Link UUID : " << f->UUIDLink << std::endl;
+     std::cout << "Parent UUID: " << f->parentUUID << std::endl;
+     */
     std::cout << "Image Description: " << f->fileDescriptor << std::endl;
 }
 
@@ -113,3 +115,116 @@ void displayCHS(CHS c){
 
 }
 
+void displaySuperblockContent(struct Ext2File *e) {
+    std::cout << "Superblock contents:" << std::endl;
+    std::cout << "Number of inodes: " << e->superBlock.s_inodes_count << std::endl;
+    std::cout << "Number of blocks: " << e->superBlock.s_blocks_count << std::endl;
+    std::cout << "Number of reserved blocks: " << e->superBlock.s_r_blocks_count << std::endl;
+    std::cout << "Number of free blocks: " << e->superBlock.s_free_blocks_count << std::endl;
+    std::cout << "Number of free inodes: " << e->superBlock.s_free_inodes_count << std::endl;
+    std::cout << "First data block: " << e->superBlock.s_first_data_block << std::endl;
+    std::cout << "Log block size: " << e->superBlock.s_log_block_size << std::endl;
+    std::cout << "Log fragment size: " << e->superBlock.s_log_frag_size << std::endl;
+    std::cout << "Blocks per group: " << e->superBlock.s_blocks_per_group << std::endl;
+    std::cout << "Fragments per group: " << e->superBlock.s_frags_per_group << std::endl;
+    std::cout << "Inodes per group: " << e->superBlock.s_inodes_per_group << std::endl;
+    std::cout << "Last mount time: " << e->superBlock.s_mtime << std::endl;
+    std::cout << "Last write time: " << e->superBlock.s_wtime << std::endl;
+    std::cout << "Mount count: " << e->superBlock.s_mnt_count << std::endl;
+    std::cout << "Max mount count: " << e->superBlock.s_max_mnt_count << std::endl;
+    std::cout << "Magic number: " << e->superBlock.s_magic << std::endl;
+    std::cout << "State: " << e->superBlock.s_state << std::endl;
+    std::cout << "Error processing: " << e->superBlock.s_errors << std::endl;
+    std::cout << "Revision level: " << e->superBlock.s_minor_rev_level << std::endl;
+    std::cout << "Last system check: " << e->superBlock.s_lastcheck << std::endl;
+    std::cout << "Check interval: " << e->superBlock.s_checkinterval << std::endl;
+    std::cout << "OS creator: " << e->superBlock.s_creator_os << std::endl;
+    std::cout << "Default reserve UID: " << e->superBlock.s_def_resuid << std::endl;
+    std::cout << "Default reserve GID: " << e->superBlock.s_def_resgid << std::endl;
+    std::cout << "First inode number: " << e->superBlock.s_first_ino << std::endl;
+    std::cout << "Inode size: " << e->superBlock.s_inode_size << std::endl;
+    std::cout << "Block group number: " << e->superBlock.s_block_group_nr << std::endl;
+    std::cout << "Feature compatibility bits: " << e->superBlock.s_feature_compat << std::endl;
+    std::cout << "Feature incompatibility bits: " << e->superBlock.s_feature_incompat << std::endl;
+    std::cout << "Feature read/only compatibility bits: " << e->superBlock.s_feature_ro_compat << std::endl;
+    //std::cout << "UUID: " << e->superBlock.s_uuid << std::endl;
+    // WHAT TO DO HERE?
+    std::cout << "Volume name: " << e->superBlock.s_volume_name << std::endl;
+    std::cout << "Last mount point: " << e->superBlock.s_last_mounted << std::endl;
+    std::cout << "Algorithm bitmap: " << e->superBlock.s_algo_bitmap << std::endl;
+    std::cout << "Number of blocks to preallocate: " << e->superBlock.s_prealloc_blocks << std::endl;
+    std::cout << "Number of blocks to preallocate for directories: " << e->superBlock.s_prealloc_dir_blocks << std::endl;
+    //std::cout << "Journal UUID: " << e->superBlock.s_journal_uuid << std::endl;
+    // WHAT TO DO HERE?
+    std::cout << "Journal inode number: " << e->superBlock.s_journal_inum << std::endl;
+    std::cout << "Journal device number: " << e->superBlock.s_journal_dev << std::endl;
+    std::cout << "Journal last orphan inode number: " << e->superBlock.s_last_orphan << std::endl;
+    std::cout << "Default hash version: " << e->superBlock.s_def_hash_version << std::endl;
+    std::cout << "Default mount option bitmap: " << e->superBlock.s_default_mount_options << std::endl;
+    std::cout << "First meta block group: " << e->superBlock.s_first_meta_bg << std::endl;
+
+}
+
+void displaySuperblockContent(struct Ext2SuperBlock *e) {
+    std::cout << "Superblock contents:" << std::endl;
+    std::cout << "Number of inodes: " << e->s_inodes_count << std::endl;
+    std::cout << "Number of blocks: " << e->s_blocks_count << std::endl;
+    std::cout << "Number of reserved blocks: " << e->s_r_blocks_count << std::endl;
+    std::cout << "Number of free blocks: " << e->s_free_blocks_count << std::endl;
+    std::cout << "Number of free inodes: " << e->s_free_inodes_count << std::endl;
+    std::cout << "First data block: " << e->s_first_data_block << std::endl;
+    std::cout << "Log block size: " << e->s_log_block_size << std::endl;
+    std::cout << "Log fragment size: " << e->s_log_frag_size << std::endl;
+    std::cout << "Blocks per group: " << e->s_blocks_per_group << std::endl;
+    std::cout << "Fragments per group: " << e->s_frags_per_group << std::endl;
+    std::cout << "Inodes per group: " << e->s_inodes_per_group << std::endl;
+    std::cout << "Last mount time: " << e->s_mtime << std::endl;
+    std::cout << "Last write time: " << e->s_wtime << std::endl;
+    std::cout << "Mount count: " << e->s_mnt_count << std::endl;
+    std::cout << "Max mount count: " << e->s_max_mnt_count << std::endl;
+    std::cout << "Magic number: " << e->s_magic << std::endl;
+    std::cout << "State: " << e->s_state << std::endl;
+    std::cout << "Error processing: " << e->s_errors << std::endl;
+    std::cout << "Revision level: " << e->s_minor_rev_level << std::endl;
+    std::cout << "Last system check: " << e->s_lastcheck << std::endl;
+    std::cout << "Check interval: " << e->s_checkinterval << std::endl;
+    std::cout << "OS creator: " << e->s_creator_os << std::endl;
+    std::cout << "Default reserve UID: " << e->s_def_resuid << std::endl;
+    std::cout << "Default reserve GID: " << e->s_def_resgid << std::endl;
+    std::cout << "First inode number: " << e->s_first_ino << std::endl;
+    std::cout << "Inode size: " << e->s_inode_size << std::endl;
+    std::cout << "Block group number: " << e->s_block_group_nr << std::endl;
+    std::cout << "Feature compatibility bits: " << e->s_feature_compat << std::endl;
+    std::cout << "Feature incompatibility bits: " << e->s_feature_incompat << std::endl;
+    std::cout << "Feature read/only compatibility bits: " << e->s_feature_ro_compat << std::endl;
+    //std::cout << "UUID: " << e->s_uuid << std::endl;
+    // WHAT TO DO HERE?
+    std::cout << "Volume name: " << e->s_volume_name << std::endl;
+    std::cout << "Last mount point: " << e->s_last_mounted << std::endl;
+    std::cout << "Algorithm bitmap: " << e->s_algo_bitmap << std::endl;
+    std::cout << "Number of blocks to preallocate: " << e->s_prealloc_blocks << std::endl;
+    std::cout << "Number of blocks to preallocate for directories: " << e->s_prealloc_dir_blocks << std::endl;
+    //std::cout << "Journal UUID: " << e->superBlock.s_journal_uuid << std::endl;
+    // WHAT TO DO HERE?
+    std::cout << "Journal inode number: " << e->s_journal_inum << std::endl;
+    std::cout << "Journal device number: " << e->s_journal_dev << std::endl;
+    std::cout << "Journal last orphan inode number: " << e->s_last_orphan << std::endl;
+    std::cout << "Default hash version: " << e->s_def_hash_version << std::endl;
+    std::cout << "Default mount option bitmap: " << e->s_default_mount_options << std::endl;
+    std::cout << "First meta block group: " << e->s_first_meta_bg << std::endl;
+
+}
+
+void displayBlockGroupDescriptorTable(struct Ext2BlockGroupDescriptor *e) {
+    std::cout << "Block group descriptor table: " << std::endl;
+    std::cout << "Block   Block   Inode   Inode   Free    Free    Used" << std::endl;
+    std::cout << "Number  Bitmap  Bitmap  Table   Blocks  Inodes  Dirs" << std::endl;
+    std::cout << "------  ------  ------  -----   ------  ------  ----" << std::endl;
+
+    for (int i = 0; i < 16; i++) {
+        std::cout << i << std::setw(4) << e->bg_block_bitmap << std::setw(4) << e->bg_inode_bitmap
+                  << std::setw(4) << e->bg_inode_table << std::setw(4) << e->bg_free_blocks_count
+                  << std::setw(4) << e->bg_free_inodes_count << std::setw(4) << e->bg_used_dirs_count << std::endl;
+    }
+
+}

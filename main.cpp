@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <sys/types.h>
 #include "VDIFile.h"
-#include "displayBuffers.cpp.h"
+#include "displayBuffers.h"
 #include "PartitionFile.h"
 #include "PartitionEntry.h"
 #include "ext2Files.h"

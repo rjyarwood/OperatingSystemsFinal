@@ -8,30 +8,47 @@
 #include <stdint-gcc.h>
 #include "ext2Files.h"
 
-struct Inode{
+struct Inode {
     uint16_t
-        i_mode,
-        i_uid;
+            i_mode,
+            i_uid;
     uint32_t
-        i_size,
-        i_atime,
-        i_ctime,
-        i_mtime,
-        i_dtime;
-    int8_t
-        i_gid,
-        i_links_count;
+            i_size,
+            i_atime,
+            i_ctime,
+            i_mtime,
+            i_dtime;
+    uint16_t
+            i_gid,
+            i_links_count;
     uint32_t
-        i_blocks,
-        i_flags,
-        i_osd1,
-        i_block[15],
-        i_generation,
-        i_file_acl,
-        i_dir_acl,
-        i_faddr;
-    unsigned char
-        i_osd2[12];
+            i_blocks,
+            i_flags,
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+            i_osd1,
+#pragma clang diagnostic pop
+            i_block[15],
+            i_generation,
+            i_file_acl,
+            i_sizeHigh,
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+            i_faddr;
+#pragma clang diagnostic pop
+    uint16_t
+            i_blocksHigh,
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+            reserved16,
+#pragma clang diagnostic pop
+            i_uidHigh,
+            i_gidHigh;
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+    uint32_t
+            reserved32;
+#pragma clang diagnostic pop
 };
 
 int32_t fetchInode(struct Ext2File, uint32_t, struct Inode);

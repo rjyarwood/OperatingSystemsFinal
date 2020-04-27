@@ -12,10 +12,13 @@ int32_t fetchInode(struct Ext2File *f, uint32_t iNum, struct Inode *buf){
 
     // To find the write block group get the inodes per group from super block and find descriptor number with that info
     int blockGroupIndex = iNum / f->superBlock.s_inodes_per_group;
-    // Find Index of Inode within the given block by finding how many inodes were skipped getting to the right block
-    int inodeIndexWithinBlock = iNum - (f->superBlock.s_inodes_per_group * blockGroupIndex);
+    // Find Index of Inode within the group containing the inode
+    int inodeIndexWithinGroup = iNum % f->superBlock.s_inodes_per_group;
+    // Fetch that block
+    temp
+    fetchBlock(f, inodeIndexWithinGroup, buf);
 
-    Ext2BlockGroupDescriptor *bgdt = new Ext2BlockGroupDescriptor [];
+
 
     int status = fetchBGDT(f, blockGroupIndex, bgdt);
 
