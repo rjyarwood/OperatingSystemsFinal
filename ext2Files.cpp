@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <unistd.h>
+#include <iostream>
 #include "VDIFile.h"
 #include "PartitionFile.h"
 #include "ext2Files.h"

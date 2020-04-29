@@ -68,7 +68,7 @@ void displayBuffer(uint8_t *buf,int32_t count,uint64_t offset){
 
 }
 
-void displayvdiHeader(struct VDIFile*f){
+void displayvdiHeader(struct VDIFile* f){
     std::cout << "Image Name: " << f->vdiHeader.fileInfo << std::endl;
     std::cout << "Signature: 0x" << std::hex << f->vdiHeader.magic << std::endl;
     std::cout << "Version: " << f->vdiHeader.versionMajor << "." << f->vdiHeader.versionMinor << std::endl;
@@ -98,7 +98,7 @@ void displayvdiHeader(struct VDIFile*f){
     std::cout << "Image Description: " << f->fileDescriptor << std::endl;
 }
 
-void displayPartitionEntry(struct PartitionEntry p){
+void displayPartitionEntry(struct PartitionEntry *p){
     std::cout << "Status: "  << p.status << std::endl;
     std::cout << "CHS of First Sector: 0x";
     displayCHS(p.CHSofFirstSect);
