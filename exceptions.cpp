@@ -3,7 +3,7 @@
 //
 // using standard exceptions
 #include <iostream>
-#include <exception>
+#include "exceptions.h"
 using namespace std;
 
 class BadIndex: public exception

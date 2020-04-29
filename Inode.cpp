@@ -14,18 +14,26 @@ int32_t fetchInode(struct Ext2File *f, uint32_t iNum, struct Inode *buf){
     // Inode starts index at 1 so decrement index
     iNum--;
 
-    // To find the write block group get the inodes per group from super block and find descriptor number with that info
+    // To find the right block group get the inodes per group from super block and find descriptor number with that info
     int blockGroupIndex = iNum / f->superBlock.s_inodes_per_group;
     // Find Index of Inode within the group containing the inode
     int inodeIndexWithinGroup = iNum % f->superBlock.s_inodes_per_group;
-    // Fetch that block
+    // Find how many inodes are within each block
+    int inodesPerBlock = f->blockSize / f->superBlock.s_inode_size;
+    // Find what block inode is in
+    int inodeBlock = inodeIndexWithinGroup / inodesPerBlock;
+    // Find index within block
+    int inodeWithinBlock = inodeIndexWithinGroup % inodesPerBlock;
+
+
+    // allocate a temporary buf to store the fetched block in
     char* temp = new char[f->blockSize];
     //Add inode table to start at the right block
-    fetchBlock(f, f->blockGroup->bg_inode_table + inodeIndexWithinGroup/f->blockSize, temp);
+    fetchBlock(f, f->blockGroup->bg_inode_table + inodeBlock, temp);
 
-    int inodesPerBlock = f->blockSize / f->superBlock.s_inode_size;
+    buf = (Inode *)temp[inodeWithinBlock];
 
-    memcpy(buf, temp + (inodeIndexWithinGroup % inodesPerBlock), f->superBlock.s_inode_size);
+    delete [] temp;
 
     return 0;
 }

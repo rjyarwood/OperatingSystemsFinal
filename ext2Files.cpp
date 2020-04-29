@@ -8,7 +8,7 @@
 #include "VDIFile.h"
 #include "PartitionFile.h"
 #include "ext2Files.h"
-#include "exceptions.cpp"
+#include "exceptions.h"
 
 /*
  * Use vdiOpen() and partitionOpen() to open the given VDI file and use partition
@@ -169,11 +169,11 @@ int32_t writeSuperblock(struct Ext2File* f,uint32_t blockNum, struct Ext2SuperBl
 int32_t fetchBGDT(struct Ext2File *f, uint32_t blockNum, struct Ext2BlockGroupDescriptor *bgdt){
 
     // Initialize the descriptor table to be the right size as each block group has a descriptor to be stored
-    bgdt = new Ext2BlockGroupDescriptor[f->blockGroupCount - blockNum];
+    bgdt = new Ext2BlockGroupDescriptor[f->blockGroupCount];
 
 
-    int descriptorsPerBlock= f->blockSize / 32;
-    int blocksNeeded = ((f->blockGroupCount -blockNum)+ (descriptorsPerBlock -1)) / descriptorsPerBlock;
+    int descriptorsPerBlock= f->blockSize / sizeof(Ext2BlockGroupDescriptor);
+    int blocksNeeded = ((f->blockGroupCount)+ (descriptorsPerBlock -1)) / descriptorsPerBlock;
     auto *tempBlock = new unsigned char[f->blockSize];
     auto *tempTable = new Ext2BlockGroupDescriptor[descriptorsPerBlock];
 
@@ -184,14 +184,10 @@ int32_t fetchBGDT(struct Ext2File *f, uint32_t blockNum, struct Ext2BlockGroupDe
     try {
         for(int i=0; i < blocksNeeded; i++) {
 
-            partitionSeek(f->partitionFile, (blockNum + i) * f->blockSize, f->partitionFile->startLoc);
             fetchBlock(f, blockNum+i, tempBlock);
 
-            memcpy(tempTable, tempBlock, f->blockSize - (f->blockSize%32));
+            memcpy(bgdt + (i*f->blockSize), tempBlock, f->blockSize - (f->blockSize%32));
 
-            for(int j=0; j < descriptorsPerBlock; j++){
-                bgdt[(i*descriptorsPerBlock) + j] = tempTable[j];
-            }
         }
 
         delete[] tempBlock;
