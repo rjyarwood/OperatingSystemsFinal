@@ -29,7 +29,7 @@ int32_t fetchInode(struct Ext2File *f, uint32_t iNum, struct Inode *buf){
     // allocate a temporary buf to store the fetched block in
     char* temp = new char[f->blockSize];
     //Add inode table to start at the right block
-    fetchBlock(f, f->blockGroup[blockGroupIndex].bg_inode_table + inodeBlock, temp);
+    fetchBlock(f, f->blockGroupTable[blockGroupIndex].bg_inode_table + inodeBlock, temp);
 
     *buf = ((Inode *)temp)[inodeWithinBlock];
 
@@ -38,7 +38,7 @@ int32_t fetchInode(struct Ext2File *f, uint32_t iNum, struct Inode *buf){
     return 0;
 }
 
-int32_t writeInode(struct Ext2File *f, uint32_t iNum, struct Inode buf){
+Inode writeInode(struct Ext2File *f, uint32_t iNum, struct Inode *buf){
 
     // Inode starts index at 1 so decrement index
     iNum--;
@@ -55,7 +55,7 @@ int32_t writeInode(struct Ext2File *f, uint32_t iNum, struct Inode buf){
 
     memcpy(temp + (inodeIndexWithinGroup % inodesPerBlock), buf, f->superBlock.s_inode_size);
 
-    return 0;
+    return reinterpret_cast<Inode &&>(temp);
 }
 
 int32_t inodeInUse(struct Ext2File *f,uint32_t iNum){

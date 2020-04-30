@@ -96,12 +96,14 @@ struct Ext2BlockGroupDescriptor{
 struct Ext2File{
     struct Ext2SuperBlock
             superBlock;
+    unsigned int
+            blockGroupCount;
     struct Ext2BlockGroupDescriptor
-            *blockGroup;
+            *blockGroupTable;
     PartitionFile
             *partitionFile;
-    int blockSize;
-    unsigned int blockGroupCount;
+    int
+            blockSize;
 };
 
 struct Ext2File *ext2Open(char *fn, int32_t pNum);

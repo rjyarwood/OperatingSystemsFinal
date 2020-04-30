@@ -4,7 +4,6 @@
 
 
 #include <cstdint>
-#include <unistd.h>
 #include <iostream>
 #include "VDIFile.h"
 #include "PartitionFile.h"
@@ -53,7 +52,7 @@ struct Ext2File *ext2Open(char *fn,int32_t pNum){
 
     //Seeking to next block to read group descriptor table
     partitionSeek(ext2File->partitionFile, (ext2File->superBlock.s_first_data_block + 1) * ext2File->blockSize, SEEK_SET);
-    partitionRead(ext2File->partitionFile, &ext2File->blockGroup, sizeof(Ext2BlockGroupDescriptor));
+    partitionRead(ext2File->partitionFile, &ext2File->blockGroupTable, sizeof(Ext2BlockGroupDescriptor) * ext2File->blockGroupCount);
 
 
     return ext2File;
