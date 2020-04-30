@@ -2,15 +2,9 @@
 // Created by rj on 2/14/20.
 //
 
-#include <cstdint>
-#include <iostream>
-#include <iomanip>
-#include "VDIFile.h"
-#include "PartitionEntry.h"
-#include "ext2Files.h"
+#include "displayBuffers.h"
 //#include "uuid2ascii.cpp"
 
-void displayCHS(CHS chs);
 
 void displayBufferPage(uint8_t *buf, uint32_t count, uint32_t start, uint64_t offset){
     std::cout << "Offset: 0x" << std::hex << offset << std::endl;
@@ -99,14 +93,14 @@ void displayvdiHeader(struct VDIFile* f){
 }
 
 void displayPartitionEntry(struct PartitionEntry *p){
-    std::cout << "Status: "  << p.status << std::endl;
+    std::cout << "Status: "  << p->status << std::endl;
     std::cout << "CHS of First Sector: 0x";
-    displayCHS(p.CHSofFirstSect);
-    std::cout << "Partition Type: " << p.partitionType << std::endl;
+    displayCHS(p->CHSofFirstSect);
+    std::cout << "Partition Type: " << p->partitionType << std::endl;
     std::cout << "CHS of Last Sector: 0x";
-    displayCHS(p.CHSofLastSect);
-    std::cout << "LBA of First Sector: 0x" << std::hex << p.LBAofFirstSect << std::endl;
-    std::cout << "LBA Sector Count: 0x" << std::hex << p.LBASectorCount << std::endl;
+    displayCHS(p->CHSofLastSect);
+    std::cout << "LBA of First Sector: 0x" << std::hex << p->LBAofFirstSect << std::endl;
+    std::cout << "LBA Sector Count: 0x" << std::hex << p->LBASectorCount << std::endl;
 
 }
 

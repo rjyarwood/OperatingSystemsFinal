@@ -12,7 +12,7 @@ const unsigned char LINUX_PARTITION = 0x83;
 
 
 struct Ext2SuperBlock{
-    __uint32_t
+    uint32_t
         s_inodes_count,
         s_blocks_count,
         s_r_blocks_count,
@@ -26,27 +26,27 @@ struct Ext2SuperBlock{
         s_inodes_per_group,
         s_mtime,
         s_wtime;
-    __uint16_t
+    uint16_t
         s_mnt_count,
         s_max_mnt_count,
         s_magic,
         s_state,
         s_errors,
         s_minor_rev_level;
-    __uint32_t
+    uint32_t
         s_lastcheck,
         s_checkinterval,
         s_creator_os,
         s_rev_level;
-    __uint16_t
+    uint16_t
         s_def_resuid,
         s_def_resgid;
-    __uint32_t
+    uint32_t
         s_first_ino;
-    __uint16_t
+    uint16_t
         s_inode_size,
         s_block_group_nr;
-    __uint32_t
+    uint32_t
         s_feature_compat,
         s_feature_incompat,
         s_feature_ro_compat;
@@ -55,16 +55,16 @@ struct Ext2SuperBlock{
     unsigned char
         s_volume_name[16],
         s_last_mounted[64];
-    __uint32_t
+    uint32_t
         s_algo_bitmap;
     unsigned char
         s_prealloc_blocks,
         s_prealloc_dir_blocks;
-    __uint16_t
+    uint16_t
         alignment;
     struct UUID
         s_journal_uuid;
-    __uint32_t
+    uint32_t
         s_journal_inum,
         s_journal_dev,
         s_last_orphan,
@@ -72,7 +72,7 @@ struct Ext2SuperBlock{
     unsigned char
         s_def_hash_version,
         padding[3];
-    __uint32_t
+    uint32_t
         s_default_mount_options,
         s_first_meta_bg;
     unsigned char
@@ -80,11 +80,11 @@ struct Ext2SuperBlock{
 };
 
 struct Ext2BlockGroupDescriptor{
-    __uint32_t
+    uint32_t
         bg_block_bitmap,
         bg_inode_bitmap,
         bg_inode_table;
-    __uint16_t
+    uint16_t
         bg_free_blocks_count,
         bg_free_inodes_count,
         bg_used_dirs_count,

@@ -174,7 +174,6 @@ int32_t fetchBGDT(struct Ext2File *f, uint32_t blockNum, struct Ext2BlockGroupDe
 
 
     int descriptorsPerBlock= f->blockSize / sizeof(Ext2BlockGroupDescriptor);
-    int blocksNeeded = ((f->blockGroupCount)+ (descriptorsPerBlock -1)) / descriptorsPerBlock;
     auto *tempBlock = new unsigned char[f->blockSize];
     auto *tempTable = new Ext2BlockGroupDescriptor[descriptorsPerBlock];
 
@@ -183,8 +182,9 @@ int32_t fetchBGDT(struct Ext2File *f, uint32_t blockNum, struct Ext2BlockGroupDe
         throw badIndex;
 
     try {
-        for(int i=0; i < blocksNeeded; i++) {
+        for(int i=0; i < f->blockGroupCount; i++) {
 
+            // Change to partition seek and read
             fetchBlock(f, blockNum+i, tempBlock);
 
             memcpy(bgdt + (i*f->blockSize), tempBlock, f->blockSize - (f->blockSize%32));
@@ -201,9 +201,6 @@ int32_t fetchBGDT(struct Ext2File *f, uint32_t blockNum, struct Ext2BlockGroupDe
         std::cout << "Exception N. " << errorNo << "was thrown in fetchBGDT" << std::endl;
         return errorNo;
     }
-
-
-
 }
 
 // ASK KRAMER

@@ -5,8 +5,9 @@
 #ifndef INC_5806FINAL_INODE_H
 #define INC_5806FINAL_INODE_H
 
-#include <stdint-gcc.h>
+#include <cstdint>
 #include "ext2Files.h"
+
 
 struct Inode {
     uint16_t

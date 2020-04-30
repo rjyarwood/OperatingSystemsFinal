@@ -29,9 +29,9 @@ int32_t fetchInode(struct Ext2File *f, uint32_t iNum, struct Inode *buf){
     // allocate a temporary buf to store the fetched block in
     char* temp = new char[f->blockSize];
     //Add inode table to start at the right block
-    fetchBlock(f, f->blockGroup->bg_inode_table + inodeBlock, temp);
+    fetchBlock(f, f->blockGroup[blockGroupIndex].bg_inode_table + inodeBlock, temp);
 
-    buf = (Inode *)temp[inodeWithinBlock];
+    *buf = ((Inode *)temp)[inodeWithinBlock];
 
     delete [] temp;
 
