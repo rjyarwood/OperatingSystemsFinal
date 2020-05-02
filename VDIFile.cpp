@@ -13,7 +13,6 @@
 #include <iostream>
 #include <cstring>
 #include <fcntl.h>
-#include "uuid2ascii.cpp"
 #include "VDIFile.h"
 
 

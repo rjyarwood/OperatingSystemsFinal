@@ -8,7 +8,6 @@
 
 
 // TODO: ask about Allocate Function
-// TODO: where does ext2File struct come from?
 
 
 int32_t fetchBlockFromFile(Ext2File *f, struct Inode *i, uint32_t bNum, void *buf){

@@ -81,7 +81,7 @@ uint32_t traversePath(Ext2File *f, char *path){
     int iNum = 2;
 
     while(start<len && iNum != 0){
-        int end = start +1;
+        int end = start + 1;
         while(path[end] != 0 && path[end] != '/'){end++;}
         path[end] = 0;
         iNum = searchDir(f,iNum, path + start);
