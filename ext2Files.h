@@ -6,6 +6,10 @@
 #define INC_5806FINAL_EXT2FILES_H
 
 #include <cstdint>
+#include <iostream>
+#include "VDIFile.h"
+#include "PartitionFile.h"
+#include "exceptions.h"
 
 
 const unsigned char LINUX_PARTITION = 0x83;

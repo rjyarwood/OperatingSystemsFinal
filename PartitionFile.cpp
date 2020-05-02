@@ -16,13 +16,7 @@ PartitionFile* partitionOpen(struct VDIFile *vdi, PartitionEntry pe){
      * and size of the given partition from the PartitionEntry struct
      */
 
-    //Will this work instead of the method below?
-    PartitionFile* partitionFile = new PartitionFile{
-        vdi,
-        pe.LBAofFirstSect * 512,
-        pe.LBASectorCount * 512,
-        SEEK_SET;
-    };
+    PartitionFile* partitionFile = new PartitionFile;
 
     partitionFile->vdi = vdi;
     partitionFile->startLoc = pe.LBAofFirstSect * 512;
@@ -40,7 +34,7 @@ void partitionClose(struct PartionFile *f){
     /*
      * This should call vdiClose to close the vdi file associated with this PartitionFile
      */
-    VDIFile *vdiFile = f.vdif;
+    VDIFile *vdiFile = f->vdif;
 
 
     vdiClose(vdiFile);

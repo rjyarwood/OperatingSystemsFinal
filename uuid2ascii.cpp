@@ -31,6 +31,7 @@ struct UUID {
 // - Is not reentrant, uses a single static buffer
 //
 
+/*
 static char *uuid2ascii(struct UUID *uuid) {
 
     sprintf(uuidStr,"%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x",
@@ -39,3 +40,4 @@ static char *uuid2ascii(struct UUID *uuid) {
             uuid->node[4],uuid->node[5]);
     return uuidStr;
 }
+ */

@@ -3,12 +3,7 @@
 //
 
 
-#include <cstdint>
-#include <iostream>
-#include "VDIFile.h"
-#include "PartitionFile.h"
 #include "ext2Files.h"
-#include "exceptions.h"
 
 /*
  * Use vdiOpen() and partitionOpen() to open the given VDI file and use partition
