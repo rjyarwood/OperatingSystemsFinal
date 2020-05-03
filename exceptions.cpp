@@ -2,22 +2,16 @@
 // Created by rjyarwood on 4/20/20.
 //
 // using standard exceptions
-#include <iostream>
+
 #include "exceptions.h"
 using namespace std;
 
-class BadIndex: public exception
-{
-    virtual const char* what() const throw()
-    {
-        return "Invalid Index";
-    }
-} badIndex;
 
-class BadSuperBlock: public exception
-{
-    virtual const char* what() const throw()
-    {
-        return "Not a valid SuperBlock";
-    }
-} invalidSuperBlock;
+
+const char *BadIndex::what() const throw() {
+    return exception::what();
+}
+
+const char *BadSuperBlock::what() const throw() {
+    return exception::what();
+}

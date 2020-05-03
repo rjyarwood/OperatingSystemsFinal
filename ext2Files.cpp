@@ -64,8 +64,9 @@ void ext2Close(struct Ext2File *f){
 int32_t fetchBlock(struct Ext2File *f, uint32_t blockNum, void *buf){
 
     //First ensure the blockNum is valid
-    if(blockNum < 0 || blockNum >= f->superBlock.s_blocks_count)
-        throw badIndex;
+    if(blockNum < 0 || blockNum >= f->superBlock.s_blocks_count) {
+        std::cout << "Block Number Invalid" << std::endl;
+    }
 
     try {
         //If valid index seek to block location
@@ -85,7 +86,7 @@ int32_t writeBlock(struct Ext2File *f, uint32_t blockNum, void *buf){
 
     //First ensure the blockNum is valid
     if(blockNum < 0 || blockNum >= f->superBlock.s_blocks_count)
-        throw badIndex;
+        std::cout << "Block Number Invalid" << std::endl;
 
 
     try {
@@ -109,7 +110,7 @@ int32_t fetchSuperblock(struct Ext2File *f,uint32_t blockNum, struct Ext2SuperBl
 
     //First ensure the blockNum is valid
     if(blockNum < 0 || blockNum >= f->superBlock.s_blocks_count)
-        throw badIndex;
+        std::cout << "Block Number Invalid" << std::endl;
 
     try {
 
@@ -124,7 +125,7 @@ int32_t fetchSuperblock(struct Ext2File *f,uint32_t blockNum, struct Ext2SuperBl
             return 0;
         }
         else{
-            throw invalidSuperBlock;
+            std::cout << "Invalid Superblock Invalid" << std::endl;
         }
 
     }
@@ -142,7 +143,7 @@ int32_t writeSuperblock(struct Ext2File* f,uint32_t blockNum, struct Ext2SuperBl
 
     //First ensure the blockNum is valid
     if(blockNum < 0 || blockNum >= f->superBlock.s_blocks_count)
-        throw badIndex;
+        std::cout << "Block Number Invalid" << std::endl;
 
     try {
 
@@ -173,7 +174,7 @@ int32_t fetchBGDT(struct Ext2File *f, uint32_t blockNum, struct Ext2BlockGroupDe
 
     // Ensure the blockNum is valid
     if(blockNum < 0 || blockNum >= f->superBlock.s_blocks_count)
-        throw badIndex;
+        std::cout << "Block Number Invalid" << std::endl;
 
     try {
         for(int i=0; i < f->blockGroupCount; i++) {
@@ -208,7 +209,7 @@ int32_t writeBGDT(struct Ext2File *f, uint32_t blockNum, struct Ext2BlockGroupDe
 
     // Ensure the blockNum is valid
     if(blockNum < 0 || blockNum >= f->superBlock.s_blocks_count)
-        throw badIndex;
+        std::cout << "Block Number Invalid" << std::endl;
 
     try {
         for(int i=0; i < blocksNeeded; i++) {

@@ -6,8 +6,10 @@
 #define INC_5806FINAL_DIRENT_H
 
 #include <cstdint>
+#include <cstring>
 #include "Inode.h"
 #include "ext2Files.h"
+#include "FileAccess.h"
 
 struct Dirent {
     uint32_t

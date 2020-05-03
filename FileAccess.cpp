@@ -8,6 +8,7 @@
 
 
 // TODO: ask about Allocate Function
+// TODO: where does ext2File struct come from?
 
 
 int32_t fetchBlockFromFile(Ext2File *f, struct Inode *i, uint32_t bNum, void *buf){
@@ -115,6 +116,7 @@ int32_t writeBlockFromFile(Ext2File *f, struct Inode *i, uint32_t bNum, void *bu
     uint32_t blockList[15];
     auto *temp = new unsigned char [sizeof(blockList)];
     int index;
+    int ibNum;
 
     if(b < 12){
         if(i->i_block[b] == 0){
@@ -133,7 +135,7 @@ int32_t writeBlockFromFile(Ext2File *f, struct Inode *i, uint32_t bNum, void *bu
         }
         fetchBlock(f, i->i_block[12], temp);
 
-        int ibNum = i->i_block[12];
+        ibNum = i->i_block[12];
         memcpy(blockList, temp, sizeof(blockList));
         b -= 12;
 
@@ -147,7 +149,7 @@ int32_t writeBlockFromFile(Ext2File *f, struct Inode *i, uint32_t bNum, void *bu
         }
         fetchBlock(f, i->i_block[13], temp);
 
-        int ibNum = i->i_block[13];
+        ibNum = i->i_block[13];
         memcpy(blockList, temp, sizeof(blockList));
         b = b - 12 - k;
 
@@ -161,7 +163,7 @@ int32_t writeBlockFromFile(Ext2File *f, struct Inode *i, uint32_t bNum, void *bu
         }
         fetchBlock(f, i->i_block[14], temp);
 
-        int ibNum = i->i_block[14];
+        ibNum = i->i_block[14];
         memcpy(blockList, temp, sizeof(blockList));
         b = b - 12 - k - pow(k, 2);
     }
@@ -174,7 +176,7 @@ int32_t writeBlockFromFile(Ext2File *f, struct Inode *i, uint32_t bNum, void *bu
         writeBlock(f, i->i_block[index], blockList);
     }
     fetchBlock(f, i->i_block[index], temp);
-    int ibNum = i->i_block[index];
+    ibNum = i->i_block[index];
     memcpy(blockList, temp, sizeof(blockList));
 
     single:
@@ -197,7 +199,7 @@ int32_t writeBlockFromFile(Ext2File *f, struct Inode *i, uint32_t bNum, void *bu
         i->i_block[b] = Allocate(f);
         writeBlock(f, i->i_block[b], blockList);
     }
-   writeBlock(f, blockList[b], buf);
+    writeBlock(f, blockList[b], buf);
 }
 
 int32_t Allocate(Ext2File *f){

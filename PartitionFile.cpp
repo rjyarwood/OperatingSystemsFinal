@@ -30,11 +30,11 @@ PartitionFile* partitionOpen(struct VDIFile *vdi, PartitionEntry pe){
 /*
  * @param f: The PartitionFile whose VDI file is to be closed
  */
-void partitionClose(struct PartionFile *f){
+void partitionClose(struct PartitionFile* f){
     /*
      * This should call vdiClose to close the vdi file associated with this PartitionFile
      */
-    VDIFile *vdiFile = f->vdif;
+    VDIFile *vdiFile = f->vdi;
 
 
     vdiClose(vdiFile);
@@ -112,13 +112,13 @@ off_t partitionSeek(struct PartitionFile *f, off_t offset, int anchor){
 
 struct PartitionTable *fillPartitionTable(VDIFile *vdi){
 
-    PartitionTable partitionTable = new PartitionTable;
+    PartitionTable* partitionTable = new PartitionTable;
 
 
     vdiSeek(vdi, 446, SEEK_SET);
     vdiRead(vdi, partitionTable, 64);
 
-    return new partitionTable;
+    return partitionTable;
 }
 
 
